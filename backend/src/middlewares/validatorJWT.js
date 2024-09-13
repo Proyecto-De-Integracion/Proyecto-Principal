@@ -5,10 +5,19 @@ import color from "chalk";
 
 export default async (req, res, next) => {
   try {
+    console.log("");
+    console.log("");
     console.log("--------------------Session-------------------");
     console.log(req.session);
+    console.log("----------------------------------------------");
+    console.log("");
+    console.log("");
     console.log("--------------------cookies-------------------");
     console.log(req.cookies);
+    console.log("----------------------------------------------");
+    console.log("");
+    console.log("");
+
     const token = req.cookies.authToken || req.session.token;
     if (!token) {
       res.status(403).json({ message: "Token no proporcionado" });

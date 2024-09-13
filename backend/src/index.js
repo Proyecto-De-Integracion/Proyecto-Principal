@@ -4,9 +4,10 @@ import morgan from "morgan";
 import color from "chalk";
 import { PORT, SECRET_KEY } from "./config/config.js";
 import database from "./db/database.js";
-import userRouter from "./routers/user.router.js";
+import userRouter from "./routers/user.routes.js";
 import session from "express-session";
 import cookieParser from "cookie-parser";
+import publicationsRoutes from "./routers/publications.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(userRouter);
+app.use(publicationsRoutes);
 database();
 app.listen(PORT, () => {
   console.log(color.blue("server is running in http://localhost:4000"));
