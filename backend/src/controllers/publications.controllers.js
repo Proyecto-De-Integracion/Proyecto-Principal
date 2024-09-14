@@ -7,22 +7,45 @@ export const getPublications = (req, res) => {};
 export const createPublications = async (req, res) => {
   try {
     const { title, idUser, description, location } = req.body;
+
     if (req.files?.media) {
       const mediaFiles = req.files.media;
       const identifier = Array.isArray(mediaFiles);
+
       if (identifier) {
         const newPublications = new publications({
           titles: title,
           idUser: idUser,
           descriptions: description,
-          locations: location,});
-          mediaFiles.forEach((element) => {
-            if (element.mimetype === "image/png") {
-              console.log("imagen", element);
-            } else if (element.mimetype === "video/mp4") {
-              console.log("video", element);
-            }
-          }),
+          locations: location,
+        });
+        mediaFiles.forEach(async (element) => {
+          if (element.mimetype == "image/png") {
+            const result = await uploadImage(element.tempFilePath);
+            console.log(result);
+
+            newPublications.medias.photos.push({
+              url: result.secure_url,
+              _id: result.public_id,
+            });
+            console.log(newPublications.medias.photos);
+          }
+        });
+
+        mediaFiles.forEach(async (element) => {
+          if (element.mimetype == "video/mp4") {
+            const result = await uploadVideo(element.tempFilePath);
+            console.log(result);
+
+            newPublications.medias.videos.push({
+              url: result.secure_url,
+              _id: result.public_id,
+            });
+            console.log(newPublications.medias.videos);
+          }
+        });
+
+        res.status(200).json({ message: "Post created successfully" });
       } else {
       }
     } else {

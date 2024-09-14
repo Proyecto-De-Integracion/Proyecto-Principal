@@ -10,7 +10,7 @@ cloudinary.config({
 
 export const uploadImage = async (filesPath) => {
   return await cloudinary.uploader.upload(filesPath, {
-    folder: "imgenProyecyt",
+    folder: "imagenProyect",
   });
 };
 
@@ -19,18 +19,16 @@ export const deleteImage = async (publicId) => {
 };
 
 export async function uploadVideo(filePath) {
-  try {
-    const uploadResult = await cloudinary.uploader.upload(filePath, {
-      resource_type: "video",
-      folder: "upload",
-    });
-    console.log("Video subido correctamente:", uploadResult.secure_url);
-
-    fs.unlinkSync(filePath);
-
-    return uploadResult.secure_url;
-  } catch (error) {
-    console.error("Error al subir el video a Cloudinary:", error);
-    throw error;
-  }
+  // try {
+  return await cloudinary.uploader.upload(filePath, {
+    resource_type: "video",
+    folder: "videoProyect",
+  });
+  // console.log("Video subido correctamente:", uploadResult.secure_url);
+  // fs.unlinkSync(filePath);
+  //   // return uploadResult.secure_url;
+  // } catch (error) {
+  //   console.error("Error al subir el video a Cloudinary:", error);
+  //   throw error;
+  // }
 }

@@ -25,14 +25,14 @@ const publicationsModels = new mongo.Schema({
   medias: {
     photos: [
       {
-        id: { type: String, default: null },
-        url: { type: String, default: null },
+        _id: String,
+        url: String,
       },
     ],
     videos: [
       {
-        id: { type: String, default: null },
-        url: { type: String, default: null },
+        _id: String,
+        url: String,
       },
     ],
   },
