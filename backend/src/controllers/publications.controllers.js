@@ -1,52 +1,67 @@
 import { publications } from "../models/publications.model.js";
-import color from "chalk";
-import { uploadImage, uploadVideo } from "../helpers/cloudinary.js";
+import { deletesFiles } from "../utils/deletePath.js";
+import {
+  multimediaFormat,
+  singlMediaFormat,
+} from "../utils/savePublications.js";
+import fs from "fs-extra";
 
-export const getPublications = (req, res) => {};
+export const getPublications = async (req, res) => {
+  try {
+    const publicCollections = await publications.find();
+    res.status(200).json(publicCollections);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const createPublications = async (req, res) => {
   try {
-    const { title, idUser, description, location } = req.body;
-
+    const { title, description, location } = req.body;
+    const idUser = req.user._id;
     if (req.files?.media) {
       const mediaFiles = req.files.media;
       const identifier = Array.isArray(mediaFiles);
-
       if (identifier) {
         const newPublications = new publications({
           titles: title,
-          idUser: idUser,
+          idUsers: idUser,
           descriptions: description,
           locations: location,
         });
-        mediaFiles.forEach(async (element) => {
-          if (element.mimetype == "image/png") {
-            const result = await uploadImage(element.tempFilePath);
-            console.log(result);
 
-            newPublications.medias.photos.push({
-              url: result.secure_url,
-              _id: result.public_id,
-            });
-            console.log(newPublications.medias.photos);
-          }
+        const mimetypes = mediaFiles.map((Element) => {
+          return Element.mimetype;
+        });
+        const tempFilePaths = mediaFiles.map((Element) => {
+          return Element.tempFilePath;
         });
 
-        mediaFiles.forEach(async (element) => {
-          if (element.mimetype == "video/mp4") {
-            const result = await uploadVideo(element.tempFilePath);
-            console.log(result);
+        const { photo, video } = await multimediaFormat(
+          mediaFiles,
+          mimetypes,
+          tempFilePaths
+        );
 
-            newPublications.medias.videos.push({
-              url: result.secure_url,
-              _id: result.public_id,
-            });
-            console.log(newPublications.medias.videos);
-          }
-        });
+        newPublications.medias.photos.push(...photo);
+        newPublications.medias.videos.push(...video);
 
+        await newPublications.save();
+        await deletesFiles(tempFilePaths);
         res.status(200).json({ message: "Post created successfully" });
       } else {
+        const newPublications = new publications({
+          titles: title,
+          idUsers: idUser,
+          descriptions: description,
+          locations: location,
+        });
+        const { video, photo } = await singlMediaFormat(mediaFiles);
+        newPublications.medias.photos.push(...photo);
+        newPublications.medias.videos.push(...video);
+        await newPublications.save();
+        await fs.unlink(mediaFiles.tempFilePath);
+        res.status(200).json({ message: "Post created successfully" });
       }
     } else {
       const newPublications = new publications({
@@ -59,6 +74,7 @@ export const createPublications = async (req, res) => {
       return res.json({ message: "Post created successfully" });
     }
   } catch (error) {
-    console.log(error);
+    console.error("Error en createPublications:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
