@@ -1,16 +1,11 @@
 import { Router } from "express";
-import { getPublications } from "../controllers/publications.controllers.js";
-import fileUpload from "express-fileupload";
+import {
+  getPublications,
+  createPublications,
+} from "../controllers/publications.controllers.js";
 
 const publicationsRoutes = Router();
 publicationsRoutes.get("/publications", getPublications);
-publicationsRoutes.post(
-  "/publications",
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "../uploads",
-  }),
-  getPublications
-);
+publicationsRoutes.post("/publications", createPublications);
 
 export default publicationsRoutes;

@@ -8,6 +8,7 @@ import userRouter from "./routers/user.routes.js";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import publicationsRoutes from "./routers/publications.routes.js";
+import fileUpload from "express-fileupload";
 
 const app = express();
 app.use(express.json());
@@ -29,6 +30,12 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
+  })
+);
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "./src/uploads",
   })
 );
 app.use(cookieParser());

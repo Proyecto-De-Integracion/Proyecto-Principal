@@ -1,15 +1,15 @@
 import mongo from "mongoose";
 const publicationsModels = new mongo.Schema({
-  title: {
+  titles: {
     type: String,
     require: true,
     trim: true,
   },
-  _idUser: {
+  idUsers: {
     type: String,
     require: true,
   },
-  description: {
+  descriptions: {
     type: String,
     require: true,
     trim: true,
@@ -18,21 +18,21 @@ const publicationsModels = new mongo.Schema({
     type: Date,
     default: Date.now(),
   },
-  location: {
+  locations: {
     type: String,
     require: true,
   },
-  media: {
+  medias: {
     photos: [
       {
-        id: String,
-        url: String,
+        id: { type: String, default: null },
+        url: { type: String, default: null },
       },
     ],
     videos: [
       {
-        id: String,
-        url: String,
+        id: { type: String, default: null },
+        url: { type: String, default: null },
       },
     ],
   },
