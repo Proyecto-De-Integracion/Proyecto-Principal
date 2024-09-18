@@ -67,6 +67,7 @@ export const secureAccess = (req, res) => {
     console.error(error);
   }
 };
+
 export const logout = (req, res) => {
   try {
     req.session.destroy((err) => {

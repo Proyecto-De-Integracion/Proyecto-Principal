@@ -9,6 +9,7 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import publicationsRoutes from "./routers/publications.routes.js";
 import fileUpload from "express-fileupload";
+import mediaRouter from "./routers/medias.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -41,6 +42,7 @@ app.use(
 app.use(cookieParser());
 app.use(userRouter);
 app.use(publicationsRoutes);
+app.use(mediaRouter);
 database();
 app.listen(PORT, () => {
   console.log(color.blue("server is running in http://localhost:4000"));
