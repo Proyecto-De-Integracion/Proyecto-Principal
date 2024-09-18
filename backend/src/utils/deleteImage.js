@@ -5,10 +5,11 @@ import mongoose from "mongoose";
 
 export const deleteImageOfdataBase = async (publicationId, imageId) => {
   try {
-    const objectId = new mongoose.Types.ObjectId(publicationId);
-    const publication = await publications.findOne({ _id: objectId }).exec();
+    const objectId = mongoose.Types.ObjectId;
+    const publication = await publications.findById(publicationId).exec();
+    console.log(publication);
 
-    if (!publication) {
+    if (publication) {
       throw new Error("Publicación no encontrada");
     }
 
