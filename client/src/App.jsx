@@ -1,23 +1,21 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import RegisterPage from "./pages/RegisterPages.jsx";
-import LoginPage from "./pages/LoginPages.jsx";
-import PaginaPrincipal from "./pages/PaginaPPages.jsx";
-import { AuthProvider } from "./context/User.Context.jsx"; // Asegúrate de importar correctamente el AuthProvider
-import HomePages from "./pages/HomePages.jsx";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import Home from "./components/Home";
+import "./index.css"; // Importa el archivo CSS de Tailwind
 
-function App() {
+const App = () => {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<PaginaPrincipal />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/home" element={<HomePages />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <Router>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/register" component={Register} />
+        <Route path="/login" component={Login} />
+        <Route path="/profile" component={Profile} />
+      </Switch>
+    </Router>
   );
-}
+};
 
 export default App;
