@@ -15,6 +15,16 @@ export const getPublications = async (req, res) => {
   }
 };
 
+export const getPublicationsById = async (req, res) => {
+  try {
+    const { _id } = req.params.id;
+    const publicationsSearched = await publications.findOne(_id).exec();
+    res.status(200).json(publicationsSearched);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const createPublications = async (req, res) => {
   try {
     const { title, description, location } = req.body;
@@ -77,4 +87,12 @@ export const createPublications = async (req, res) => {
     console.error("Error en createPublications:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+};
+
+export const updatePublications = async (req, res) => {
+  try {
+    const { _id } = req.params.id;
+    const publicationsSearched = await publications.findOne(_id).exec();
+    console.log({ publicationsSearched });
+  } catch (error) {}
 };

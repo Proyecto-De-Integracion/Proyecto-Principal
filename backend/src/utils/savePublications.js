@@ -19,7 +19,7 @@ export const multimediaFormat = async (arrai0, arrai1, arrai2) => {
     }
 
     // Filtrar imágenes por tipo, manejando más formatos
-    if (arrai1[i].startsWith("image/")) {
+    if (arrai1[i] === "image/png" || arrai1[1] === "image/jpeg") {
       try {
         const resultImage = await uploadImage(arrai2[i]);
         photo.push({
@@ -31,6 +31,7 @@ export const multimediaFormat = async (arrai0, arrai1, arrai2) => {
       }
     }
   }
+
   return { photo, video };
 };
 
