@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { deleteImageInCloudinary } from "../controllers/media.controller.js";
+import {
+  deleteImageInCloudinary,
+  deleteVideoInCloudinary,
+} from "../controllers/media.controller.js";
 
 const mediaRouter = Router();
 mediaRouter.delete("/deleteImage", deleteImageInCloudinary);
-mediaRouter.delete("/");
+mediaRouter.delete("/deleteVideo", deleteVideoInCloudinary);
 
 export default mediaRouter;
