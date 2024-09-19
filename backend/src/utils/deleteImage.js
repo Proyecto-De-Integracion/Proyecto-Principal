@@ -1,36 +1,60 @@
 import { deleteImage, deleteVideo } from "../helpers/cloudinary.js";
 import { publications } from "../models/publications.model.js";
-import color from "chalk";
 import mongoose from "mongoose";
+const objectId = mongoose.Types.ObjectId;
 
-export const deleteImageOfdataBase = async (publicationId, imageId) => {
+export const deleteImageOfdataBase = async (pId, imageId) => {
   try {
-    const objectId = mongoose.Types.ObjectId;
-    const publication = await publications.findById(publicationId).exec();
-    console.log(publication);
+    const idValid = objectId.isValid(pId);
 
-    if (publication) {
-      throw new Error("Publicación no encontrada");
+    if (idValid) {
+      const publication = await publications.findById(pId).exec();
+
+      if (!publication) return { message: "the post does not exist" };
+
+      const result = await publication.updateOne({
+        $pull: { "medias.photos": { _id: imageId } },
+      });
+      if (result.acknowledged === true && result.modifiedCount === 1) {
+        await deleteImage(imageId);
+
+        return { message: "image deleted successfully" };
+      } else if (result.acknowledged === true && result.modifiedCount === 0) {
+        return { message: "the image has already been deleted" };
+      } else {
+        return { message: "error deleting image" };
+      }
+    } else {
+      return { message: "The id entered is not valid" };
     }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-    await publication.updateOne({
-      $pull: { medias: { photos: { _id: imageId } } },
-    });
+export const deleteVideoOfdataBase = async (pId, videoId) => {
+  try {
+    const idValid = objectId.isValid(pId);
 
-    console.log("Imagen eliminada de la base de datos");
+    if (idValid) {
+      const publication = await publications.findById(pId).exec();
 
-    // Manejar errores en deleteImage
-    try {
-      await deleteImage(imageId);
-      console.log("Imagen eliminada del almacenamiento");
-    } catch (error) {
-      console.error("Error al eliminar la imagen:", error);
-      // Manejar el error de forma adecuada, por ejemplo, registrarlo en un log
+      if (!publication) return { message: "the post does not exist" };
+
+      const result = await publication.updateOne({
+        $pull: { "medias.videos": { _id: videoId } },
+      });
+      if (result.acknowledged === true && result.modifiedCount === 1) {
+        await deleteVideo(videoId);
+        return { message: "video deleted successfully" };
+      } else if (result.acknowledged === true && result.modifiedCount === 0) {
+        return { message: "the video has already been deleted" };
+      } else {
+        return { message: "error deleting video" };
+      }
+    } else {
+      return { message: "The id entered is not valid" };
     }
-
-    res.status(200).json({
-      message: "Imagen eliminada exitosamente",
-    });
   } catch (error) {
     console.error(error);
   }

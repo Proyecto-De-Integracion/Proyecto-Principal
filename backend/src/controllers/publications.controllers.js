@@ -33,6 +33,11 @@ export const createPublications = async (req, res) => {
       const mediaFiles = req.files.media;
       const identifier = Array.isArray(mediaFiles);
       if (identifier) {
+        const { photo, video } = await multimediaFormat(
+          mediaFiles,
+          mimetypes,
+          tempFilePaths
+        );
         const newPublications = new publications({
           titles: title,
           idUsers: idUser,
@@ -46,12 +51,6 @@ export const createPublications = async (req, res) => {
         const tempFilePaths = mediaFiles.map((Element) => {
           return Element.tempFilePath;
         });
-
-        const { photo, video } = await multimediaFormat(
-          mediaFiles,
-          mimetypes,
-          tempFilePaths
-        );
 
         newPublications.medias.photos.push(...photo);
         newPublications.medias.videos.push(...video);
