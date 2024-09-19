@@ -1,0 +1,91 @@
+/* Login.css */
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #06141b;
+}
+
+.form {
+  background-color: #11212d;
+  padding: 2rem;
+  border-radius: 12px; /* Bordes redondeados */
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más suave */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.form:hover {
+  transform: translateY(-5px); /* Efecto de elevación al pasar el cursor */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.title {
+  font-size: 1.75rem; /* Tamaño de fuente más grande */
+  margin-bottom: 1.5rem;
+  color: #ccd0cf;
+  text-align: center; /* Centrar el título */
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ccd0cf;
+  margin-bottom: 0.5rem; /* Espaciado entre la etiqueta y el input */
+}
+
+.input {
+  border: 1px solid #9ba8ab;
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 0.75rem; /* Más relleno */
+  width: 100%;
+  background-color: #253745;
+  color: #ccd0cf;
+  font-size: 0.875rem; /* Tamaño de fuente más pequeño */
+  transition: border-color 0.3s;
+}
+
+.input:focus {
+  border-color: #4a5c6a; /* Color de borde al enfocar */
+  outline: none;
+}
+
+.input-error {
+  border-color: red;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.button {
+  background-color: #4a5c6a;
+  color: #ccd0cf;
+  padding: 0.75rem 1.5rem; /* Más relleno */
+  border-radius: 8px; /* Bordes redondeados */
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 0.875rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+  background-color: #9ba8ab;
+  transform: translateY(-2px); /* Efecto de elevación al pasar el cursor */
+}
+
+.button:active {
+  background-color: #4a5c6a;
+  transform: translateY(0);
+}

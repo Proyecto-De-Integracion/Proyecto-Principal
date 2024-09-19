@@ -17,6 +17,7 @@ app.use(morgan("dev"));
 app.use(
   cors({
     origin: [
+      "http://localhost:5173",
       "http://localhost:5500",
       "http://localhost:3000",
       "http://127.0.0.1:3000",
@@ -25,21 +26,24 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-app.use(
-  session({
-    secret: SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
+app.use(cookieParser());
+app.use(session({
+  secret: SECRET_KEY,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+  },
+}));
+
 app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: "./src/uploads",
   })
 );
-app.use(cookieParser());
 app.use(userRouter);
 app.use(publicationsRoutes);
 app.use(mediaRouter);
