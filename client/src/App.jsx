@@ -3,7 +3,7 @@ import RegisterPage from "./pages/RegisterPages.jsx";
 import LoginPage from "./pages/LoginPages.jsx";
 import PaginaPrincipal from "./pages/PaginaPPages.jsx";
 import { AuthProvider } from "./context/User.Context.jsx"; // Asegúrate de importar correctamente el AuthProvider
-import HomePages from "./pages/HomePages.jsx";
+import { HomePages } from "./pages/HomePages.jsx";
 
 function App() {
   return (
