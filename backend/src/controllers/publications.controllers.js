@@ -33,6 +33,12 @@ export const createPublications = async (req, res) => {
       const mediaFiles = req.files.media;
       const identifier = Array.isArray(mediaFiles);
       if (identifier) {
+        const mimetypes = mediaFiles.map((Element) => {
+          return Element.mimetype;
+        });
+        const tempFilePaths = mediaFiles.map((Element) => {
+          return Element.tempFilePath;
+        });
         const { photo, video } = await multimediaFormat(
           mediaFiles,
           mimetypes,
@@ -43,13 +49,6 @@ export const createPublications = async (req, res) => {
           idUsers: idUser,
           descriptions: description,
           locations: location,
-        });
-
-        const mimetypes = mediaFiles.map((Element) => {
-          return Element.mimetype;
-        });
-        const tempFilePaths = mediaFiles.map((Element) => {
-          return Element.tempFilePath;
         });
 
         newPublications.medias.photos.push(...photo);
@@ -86,12 +85,4 @@ export const createPublications = async (req, res) => {
     console.error("Error en createPublications:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-};
-
-export const updatePublications = async (req, res) => {
-  try {
-    const { _id } = req.params.id;
-    const publicationsSearched = await publications.findOne(_id).exec();
-    console.log({ publicationsSearched });
-  } catch (error) {}
 };
