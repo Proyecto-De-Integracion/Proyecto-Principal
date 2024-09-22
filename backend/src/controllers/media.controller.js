@@ -49,7 +49,6 @@ export const updateMedias = async (req, res) => {
         const type = media.mimetype;
         if (type === "image/png" || type === "image/jpeg") {
           const { dato } = await fileInsert(type, rout);
-
           publication.medias.photos.push(...dato);
           await publication.save();
         } else if (type === "video/mp4") {

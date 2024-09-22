@@ -3,10 +3,6 @@ import { dataBase } from "../db/dataBase.js";
 import { My_Secret_Key, sql } from "../config/config.js";
 export default async (req, res, next) => {
   try {
-    // console.log(req.session);
-    // console.log("----------------------------------------------------");
-    // console.log(req.cookies);
-
     const token = req.cookies.authToken || req.session.token;
 
     if (!token) {
