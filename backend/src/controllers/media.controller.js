@@ -9,7 +9,8 @@ import { publications } from "../models/publications.model.js";
 
 export const deleteImageInCloudinary = async (req, res) => {
   try {
-    const { id, idImage } = req.body;
+    const { id } = req.params;
+    const { idImage } = req.body;
     const { message } = await deleteImageOfdataBase(id, idImage);
     res.json({
       message: message,
@@ -21,7 +22,8 @@ export const deleteImageInCloudinary = async (req, res) => {
 
 export const deleteVideoInCloudinary = async (req, res) => {
   try {
-    const { id, idVideo } = req.body;
+    const { id } = req.params;
+    const { idVideo } = req.body;
     const { message } = await deleteVideoOfdataBase(id, idVideo);
     res.json({
       message: message,

@@ -6,8 +6,8 @@ import {
 } from "../controllers/media.controller.js";
 
 const mediaRouter = Router();
-mediaRouter.delete("/deleteImage", deleteImageInCloudinary);
-mediaRouter.delete("/deleteVideo", deleteVideoInCloudinary);
+mediaRouter.delete("/deleteImage/:id", deleteImageInCloudinary);
+mediaRouter.delete("/deleteVideo/:id", deleteVideoInCloudinary);
 mediaRouter.put("/insertMedias/:id", updateMedias);
 
 export default mediaRouter;

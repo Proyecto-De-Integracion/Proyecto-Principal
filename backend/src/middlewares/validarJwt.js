@@ -1,5 +1,5 @@
 import JWT from "jsonwebtoken";
-import { dataBase } from "../db/dataBase.js";
+import { dataBase } from "../db/database.js";
 import { My_Secret_Key, sql } from "../config/config.js";
 export default async (req, res, next) => {
   try {
