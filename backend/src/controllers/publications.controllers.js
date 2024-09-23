@@ -5,6 +5,9 @@ import {
   singlMediaFormat,
 } from "../utils/savePublications.js";
 import fs from "fs-extra";
+import { login } from "./user.controllers.js";
+import { validatorId } from "../middlewares/validatorId.js";
+import mongoose from "mongoose";
 
 export const getPublications = async (req, res) => {
   try {
@@ -84,5 +87,34 @@ export const createPublications = async (req, res) => {
   } catch (error) {
     console.error("Error en createPublications:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const updatedPublications = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { valor } = validatorId(id);
+    const { title, description, location } = req.body;
+    if (!valor) res.status(404).json({ message: "invalid id" });
+    if (!req.file?.media) {
+      const publication = await publications.updateOne(
+        { _id: new mongoose.Types.ObjectId(id) },
+        {
+          $Set: {
+            titles: title,
+            descriptions: description,
+            location: location,
+          },
+        }
+        if () {
+          
+        } else {
+          
+        }
+      );
+    } else {
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
