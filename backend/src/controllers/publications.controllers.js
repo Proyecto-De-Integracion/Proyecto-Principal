@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { publications } from "../models/publications.model.js";
 import { deletesFiles } from "../utils/deletePath.js";
 import {
@@ -90,8 +91,39 @@ export const createPublications = async (req, res) => {
 
 export const updatePublications = async (req, res) => {
   try {
-    const { _id } = req.params.id;
-    const publicationsSearched = await publications.findOne(_id).exec();
-    console.log({ publicationsSearched });
+    const { id } = req.params;
+    const { title, description, location } = req.body;
+    const valor = mongoose.Types.ObjectId.isValid(id);
+    if (!valor) res.status(404).json({ message: "invalid id" });
+
+    if (req.file.media) {
+      const media = req.file.media;
+
+      console.log(title, description, location);
+      console.log(media);
+      const valid = Array.isArray(media);
+      console.log(valid);
+      if (!valid) {
+        console.log("no es un array");
+      } else {
+        console.log(" es un array");
+      }
+    } else {
+      const publicationsUpdate = await publications.findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            titles: title,
+            descriptions: description,
+            locations: location,
+          },
+        },
+        { new: true }
+      );
+      console.log(publicationsUpdate);
+      res.status(200).json({
+        message: "publication updated successfully",
+      });
+    }
   } catch (error) {}
 };
