@@ -18,8 +18,8 @@ export const getPublications = async (req, res) => {
 
 export const getPublicationsById = async (req, res) => {
   try {
-    const { _id } = req.params.id;
-    const publicationsSearched = await publications.findOne(_id).exec();
+    const { id } = req.params;
+    const publicationsSearched = await publications.findById(id)
     res.status(200).json(publicationsSearched);
   } catch (error) {
     console.log(error);
@@ -34,6 +34,12 @@ export const createPublications = async (req, res) => {
       const mediaFiles = req.files.media;
       const identifier = Array.isArray(mediaFiles);
       if (identifier) {
+        const mimetypes = mediaFiles.map((Element) => {
+          return Element.mimetype;
+        });
+        const tempFilePaths = mediaFiles.map((Element) => {
+          return Element.tempFilePath;
+        });
         const { photo, video } = await multimediaFormat(
           mediaFiles,
           mimetypes,
@@ -46,12 +52,6 @@ export const createPublications = async (req, res) => {
           locations: location,
         });
 
-        const mimetypes = mediaFiles.map((Element) => {
-          return Element.mimetype;
-        });
-        const tempFilePaths = mediaFiles.map((Element) => {
-          return Element.tempFilePath;
-        });
 
         newPublications.medias.photos.push(...photo);
         newPublications.medias.videos.push(...video);
@@ -93,23 +93,54 @@ export const updatePublications = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, location } = req.body;
+    
     const valor = mongoose.Types.ObjectId.isValid(id);
+
     if (!valor) res.status(404).json({ message: "invalid id" });
-
-    if (req.file.media) {
-      const media = req.file.media;
-
-      console.log(title, description, location);
-      console.log(media);
+    
+    const publication = await publications.findById(id);
+    
+    
+    if (req.files?.media) {
+      const media = req.files.media;
       const valid = Array.isArray(media);
-      console.log(valid);
       if (!valid) {
-        console.log("no es un array");
+        const {video,photo}= await singlMediaFormat(media);
+        console.log(publication.medias);
+        publication.medias.photos.push(...photo);
+        publication.medias.videos.push(...video);
+        console.log(publication.medias);
+        
+        
+
+
       } else {
-        console.log(" es un array");
+        const type = media.map(e=>{
+          return e.mimetype
+        })
+        const path = media.map(e=>{
+          return e.tempFilePath
+        })
+        const { photo, video } = await multimediaFormat(media,type,path)
+        photo.forEach(async(e)=>{
+        await publications.findByIdAndUpdate(id,{$push:{'medias.photos':{ _id: e._id , url: e.url}}},{new:true})
+        }
+      );
+      video.forEach(async(e)=>{
+        await publications.findByIdAndUpdate(id,{$push:{'medias.videos':{_id: e._id, url: e.url }}},{new:true})
+      });
+      const publicationUpdate = await publications.findByIdAndUpdate(id,
+        {$set:{
+          titles:title,
+          descriptions:description,
+          locations:location
+        }},{new:true}
+      )
+      console.log(publicationUpdate);
+      
       }
-    } else {
-      const publicationsUpdate = await publications.findByIdAndUpdate(
+      } else {
+      await publications.findByIdAndUpdate(
         id,
         {
           $set: {
@@ -120,10 +151,11 @@ export const updatePublications = async (req, res) => {
         },
         { new: true }
       );
-      console.log(publicationsUpdate);
-      res.status(200).json({
-        message: "publication updated successfully",
-      });
-    }
-  } catch (error) {}
+      return res.json({
+        message:'publication updated successfully'
+      })
+    } 
+  } catch (error) {
+    console.log(error);
+  }
 };
