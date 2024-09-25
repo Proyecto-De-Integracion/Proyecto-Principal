@@ -6,9 +6,6 @@ import {
   singlMediaFormat,
 } from "../utils/savePublications.js";
 import fs from "fs-extra";
-import { login } from "./user.controllers.js";
-import { validatorId } from "../middlewares/validatorId.js";
-import mongoose from "mongoose";
 
 export const getPublications = async (req, res) => {
   try {
@@ -31,7 +28,8 @@ export const getPublicationsById = async (req, res) => {
 
 export const createPublications = async (req, res) => {
   try {
-    const { title, description, location } = req.body;
+    const { title, description, location, category } = req.body;
+    
     const idUser = req.user._id;
     if (req.files?.media) {
       const mediaFiles = req.files.media;
@@ -53,6 +51,7 @@ export const createPublications = async (req, res) => {
           idUsers: idUser,
           descriptions: description,
           locations: location,
+          categorys:category
         });
 
 
@@ -68,6 +67,7 @@ export const createPublications = async (req, res) => {
           idUsers: idUser,
           descriptions: description,
           locations: location,
+          categorys:category
         });
         const { video, photo } = await singlMediaFormat(mediaFiles);
         newPublications.medias.photos.push(...photo);
@@ -82,6 +82,7 @@ export const createPublications = async (req, res) => {
         idUsers: idUser,
         descriptions: description,
         locations: location,
+        categorys:category
       });
       await newPublications.save();
       return res.json({ message: "Post created successfully" });
@@ -95,7 +96,7 @@ export const createPublications = async (req, res) => {
 export const updatedPublications = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, location } = req.body;
+    const { title, description, location, category } = req.body;
     
     const valor = mongoose.Types.ObjectId.isValid(id);
 
@@ -106,17 +107,19 @@ export const updatedPublications = async (req, res) => {
     
     if (req.files?.media) {
       const media = req.files.media;
-      const valid = Array.isArray(media);
-      if (!valid) {
+      const isAnArray = Array.isArray(media);
+      if (!isAnArray) {
         const {video,photo}= await singlMediaFormat(media);
-        console.log(publication.medias);
         publication.medias.photos.push(...photo);
         publication.medias.videos.push(...video);
-        console.log(publication.medias);
-        
-        
-
-
+        publication.titles = title; 
+        publication.descriptions = description; 
+        publication.locations = location; 
+        publication.categorys = category;  
+        await publication.save();
+        res.status(200).json({
+          message:'publication updated successfully'
+        })
       } else {
         const type = media.map(e=>{
           return e.mimetype
@@ -136,7 +139,8 @@ export const updatedPublications = async (req, res) => {
         {$set:{
           titles:title,
           descriptions:description,
-          locations:location
+          locations:location,
+          categorys: category
         }},{new:true}
       )
       console.log(publicationUpdate);
@@ -150,6 +154,7 @@ export const updatedPublications = async (req, res) => {
             titles: title,
             descriptions: description,
             locations: location,
+            categorys:category,
           },
         },
         { new: true }

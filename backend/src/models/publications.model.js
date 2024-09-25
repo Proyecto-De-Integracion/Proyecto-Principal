@@ -23,6 +23,10 @@ const publicationsModels = new mongo.Schema({
     type: String,
     require: true,
   },
+  categorys:{
+    type:String,
+    require:true
+  },
   medias: {
     photos: [
       {

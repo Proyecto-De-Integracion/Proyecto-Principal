@@ -35,16 +35,12 @@ export const singlMediaFormat = async (file) => {
   const video = [];
   const photo = [];
   if (file.mimetype === "video/mp4") {
-    console.log("video");
-    console.log(file.tempFilePath);
     const resultVideo = await uploadVideo(file.tempFilePath);
     video.push({
       _id: resultVideo.public_id,
       url: resultVideo.secure_url,
     });
   } else if (file.mimetype === "image/png" || file.mimetype === "image/jpeg") {
-    console.log("Image");
-    console.log(file.tempFilePath);
     const resultImage = await uploadImage(file.tempFilePath);
     photo.push({
       _id: resultImage.public_id,
