@@ -1,4 +1,5 @@
 import mongo from "mongoose";
+import fechaHoraActual from "../utils/generateDate.js";
 const publicationsModels = new mongo.Schema({
   titles: {
     type: String,
@@ -15,8 +16,8 @@ const publicationsModels = new mongo.Schema({
     trim: true,
   },
   date: {
-    type: Date,
-    default: Date.now(),
+    type: String,
+    default: fechaHoraActual,
   },
   locations: {
     type: String,

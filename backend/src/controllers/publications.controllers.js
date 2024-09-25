@@ -6,6 +6,9 @@ import {
   singlMediaFormat,
 } from "../utils/savePublications.js";
 import fs from "fs-extra";
+import { login } from "./user.controllers.js";
+import { validatorId } from "../middlewares/validatorId.js";
+import mongoose from "mongoose";
 
 export const getPublications = async (req, res) => {
   try {
@@ -89,7 +92,7 @@ export const createPublications = async (req, res) => {
   }
 };
 
-export const updatePublications = async (req, res) => {
+export const updatedPublications = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, location } = req.body;

@@ -1,6 +1,13 @@
-import { deleteImage, deleteVideo } from "../helpers/cloudinary.js";
+import {
+  deleteImage,
+  deleteVideo,
+  uploadImage,
+  uploadVideo,
+} from "../helpers/cloudinary.js";
 import { publications } from "../models/publications.model.js";
 import mongoose from "mongoose";
+import fs from "fs-extra";
+import { deletesFiles } from "./deletePath.js";
 const objectId = mongoose.Types.ObjectId;
 
 export const deleteImageOfdataBase = async (pId, imageId) => {
@@ -57,5 +64,50 @@ export const deleteVideoOfdataBase = async (pId, videoId) => {
     }
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const fileInsertion = async (files, typeFile, routFiles) => {
+  const photos = [];
+  const videos = [];
+  for (let i = 0; i < files.length; i++) {
+    if (typeFile[i] === "image/png" || typeFile[i] === "image/jpeg") {
+      const result = await uploadImage(routFiles[i]);
+      photos.push({
+        _id: result.public_id,
+        url: result.secure_url,
+      });
+    } else if (typeFile[i] === "video/mp4") {
+      const result = await uploadVideo(routFiles[i]);
+      videos.push({
+        _id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+  }
+  await deletesFiles(routFiles);
+  return { photos, videos };
+};
+
+export const fileInsert = async (type, rout) => {
+  try {
+    const dato = [];
+    if (type === "video/mp4") {
+      const result = await uploadVideo(rout);
+      dato.push({
+        _id: result.public_id,
+        url: result.secure_url,
+      });
+    } else if (type === "image/png" || type === "image/jpeg") {
+      const result = await uploadImage(rout);
+      dato.push({
+        _id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+    await fs.unlink(rout);
+    return { dato };
+  } catch (error) {
+    console.log(error);
   }
 };
