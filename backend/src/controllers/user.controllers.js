@@ -23,32 +23,23 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Buscar usuario por correo electrónico
     const userSearched = await user.findOne({ emails: email });
     if (!userSearched) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
-    // Verificar la contraseña
     const isValidPassword = await bcrypt.compare(password, userSearched.passwords);
     if (!isValidPassword) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
-    // Generar el token JWT
     const token = await generateJWT(userSearched._id);
-
-    // Almacenar el token en la sesión
     req.session.token = token;
-
-    // Configurar la cookie con el token JWT
     res.cookie("authToken", token, {
-      httpOnly: true,  // Solo accesible desde HTTP, no por JavaScript
-      secure: process.env.NODE_ENV === 'production',  // Solo HTTPS en producción
-      maxAge: 3600000,  // Tiempo de expiración: 1 hora
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',  // Configuración para solicitudes CORS
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 3600000, // 1 hora
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     });
+
 
     // Responder con éxito
     return res.status(200).json({ message: "Login successful" });
@@ -81,10 +72,12 @@ export const logout = (req, res) => {
       }
 
       res.clearCookie("authToken");
-      return res.json({ message: "Cierre de sesión exitoso" });
+      return res.json({ message: "Logout successful" });
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error Inesperado" });
   }
 };
+
+

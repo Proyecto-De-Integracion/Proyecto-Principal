@@ -29,10 +29,9 @@ app.use(session({
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-    maxAge: 3600000,  // Establece un tiempo de expiración de 1 hora (en milisegundos)
+    maxAge: 3600000,
   },
 }));
-
 app.use(
   fileUpload({
     useTempFiles: true,
