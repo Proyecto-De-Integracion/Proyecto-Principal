@@ -4,6 +4,7 @@ import generateJWT from "../helpers/generateJWT.js";
 import fs from 'fs';
 import path from 'path';
 
+// Función para registrar un nuevo usuario
 export const register = async (req, res) => {
   try {
     const { username, password, email } = req.body;
@@ -21,6 +22,7 @@ export const register = async (req, res) => {
   }
 };
 
+// Función para iniciar sesión
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -40,30 +42,21 @@ export const login = async (req, res) => {
       maxAge: 3600000,
       sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     });
-
-    return res.status(200).json({ message: "Login successful" });
+    const { usernames, profilePicture } = userSearched;
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        usernames,
+        profilePicture
+      }
+    });
   } catch (error) {
     console.error("Error during login:", error);
     return res.status(500).json({ message: "Unexpected Error", error });
   }
 };
 
-
-export const secureAccess = (req, res) => {
-  try {
-    if (!req.user) {
-      res.json({ message: "user did not log in" });
-    } else {
-      res.json({
-        message: "Access allowed to protected area",
-        user: req.user,
-      });
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
+// Función para cerrar sesión
 export const logout = (req, res) => {
   try {
     req.session.destroy((err) => {
@@ -80,19 +73,39 @@ export const logout = (req, res) => {
   }
 };
 
-
+// Función para actualizar la foto de perfil
 export const updateProfilePicture = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No se ha subido ninguna imagen" });
     }
+    const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
 
-    const profilePicturePath = path.join('uploads', req.file.filename);
+    const profilePicturePath = `${baseUrl}/uploads/${req.file.filename}`;
+
+    // Actualiza la imagen en la base de datos
     await User.updateOne({ _id: req.user.id }, { profilePicture: profilePicturePath });
 
-    return res.status(200).json({ message: "Foto de perfil actualizada con éxito" });
+    return res.status(200).json({ message: "Foto de perfil actualizada con éxito", profilePicture: profilePicturePath });
   } catch (error) {
     console.error("Error al actualizar la foto de perfil:", error);
     return res.status(500).json({ message: "Error al actualizar la foto de perfil", error: error.message });
   }
 };
+
+
+// Función para obtener la sesión del usuario
+export const getSession = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "No se ha iniciado sesión" });
+  }
+
+  const { usernames, profilePicture } = req.user;
+  return res.json({
+    user: {
+      usernames,
+      profilePicture
+    }
+  });
+};
+

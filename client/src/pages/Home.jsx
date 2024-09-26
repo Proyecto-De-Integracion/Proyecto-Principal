@@ -13,6 +13,9 @@ const Home = () => {
       const res = await getSession();
       if (res.user) {
         setUser(res.user);
+        if (res.user.profilePicture) {
+          setProfilePicture(res.user.profilePicture);
+        }
       } else {
         navigate("/login");
       }
@@ -30,7 +33,6 @@ const Home = () => {
         showConfirmButton: false,
         timer: 2000,
       });
-      // No eliminar el estado de user aquí
       setTimeout(() => {
         navigate("/login");
       }, 2000);
@@ -43,8 +45,6 @@ const Home = () => {
     const file = event.target.files[0];
     if (file) {
       setProfilePicture(file);
-
-      // Crear una URL para la imagen seleccionada
       const imageUrl = URL.createObjectURL(file);
       setUser((prevUser) => ({
         ...prevUser,
@@ -61,6 +61,12 @@ const Home = () => {
       const res = await updateProfilePicture(formData);
       if (res.message) {
         Swal.fire("Éxito", "La foto de perfil se ha actualizado", "success");
+
+        // Actualizar el estado del usuario con la nueva URL de la imagen
+        setUser((prevUser) => ({
+          ...prevUser,
+          profilePicture: res.profilePicture, // Se usa la URL devuelta por el servidor
+        }));
       } else {
         throw new Error("No se pudo actualizar la foto de perfil");
       }
@@ -78,6 +84,7 @@ const Home = () => {
     <div className="flex flex-col justify-center items-center h-screen">
       <h2 className="text-3xl">Welcome, {user?.usernames}</h2>
 
+      {/* Mostrar la imagen de perfil si está disponible */}
       {user?.profilePicture && (
         <img
           src={user.profilePicture}
