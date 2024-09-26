@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { SECRET_KEY } from "../config/config.js";
-import { user } from "../models/user.model.js";
+import User from "../models/user.model.js";
 import color from "chalk";
 
 export default async (req, res, next) => {
@@ -16,7 +16,7 @@ export default async (req, res, next) => {
       return res.status(403).json({ message: "You do not have the authorization" });
     }
     const decoded = jwt.verify(token, SECRET_KEY);
-    const userSearched = await user.findById(decoded.id);
+    const userSearched = await User.findById(decoded.id); // Aquí usa "User" en mayúscula
     if (!userSearched) {
       return res.status(401).json({ message: "Your authorization has already expired" });
     }
