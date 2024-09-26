@@ -16,6 +16,10 @@ const userModel = new mongo.Schema({
     required: true,
     trim: true,
   },
+  profilePicture: {
+    type: String,
+    default: null,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

@@ -34,3 +34,12 @@ export const logoutUser = async () => {
     });
     return response.json();
 };
+
+export const updateProfilePicture = async (formData) => {
+    const response = await fetch(`${BASE_URL}/profile-picture`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+    });
+    return response.json();
+};

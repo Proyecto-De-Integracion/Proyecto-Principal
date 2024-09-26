@@ -2,7 +2,10 @@ import bcrypt from "bcrypt";
 import { user } from "../models/user.model.js";
 import color from "chalk";
 import generateJWT from "../helpers/generateJWT.js";
+import fs from 'fs';
+import path from 'path';
 
+// Función para registrar un nuevo usuario
 export const register = async (req, res) => {
   try {
     const { username, password, email } = req.body;
@@ -20,6 +23,7 @@ export const register = async (req, res) => {
   }
 };
 
+// Función para iniciar sesión
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -40,7 +44,6 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     });
 
-
     // Responder con éxito
     return res.status(200).json({ message: "Login successful" });
   } catch (error) {
@@ -49,6 +52,7 @@ export const login = async (req, res) => {
   }
 };
 
+// Función para asegurar acceso a áreas protegidas
 export const secureAccess = (req, res) => {
   try {
     if (!req.user) {
@@ -64,6 +68,7 @@ export const secureAccess = (req, res) => {
   }
 };
 
+// Función para cerrar sesión
 export const logout = (req, res) => {
   try {
     req.session.destroy((err) => {
@@ -77,6 +82,23 @@ export const logout = (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error Inesperado" });
+  }
+};
+
+// Función para actualizar la foto de perfil
+export const updateProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No se ha subido ninguna imagen" });
+    }
+
+    const profilePicturePath = path.join('uploads', req.file.filename);
+    await User.updateOne({ _id: req.user.id }, { profilePicture: profilePicturePath });
+
+    return res.status(200).json({ message: "Foto de perfil actualizada con éxito" });
+  } catch (error) {
+    console.error("Error al actualizar la foto de perfil:", error);
+    return res.status(500).json({ message: "Error al actualizar la foto de perfil", error: error.message });
   }
 };
 

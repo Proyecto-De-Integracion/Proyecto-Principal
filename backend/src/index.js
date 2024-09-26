@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import publicationsRoutes from "./routers/publications.routes.js";
 import fileUpload from "express-fileupload";
 import mediaRouter from "./routers/medias.routes.js";
+import path from "path"; // Asegúrate de importar path
 
 const app = express();
 app.use(express.json());
@@ -32,12 +33,8 @@ app.use(session({
     maxAge: 3600000,
   },
 }));
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "./src/uploads",
-  })
-);
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(userRouter);
 app.use(publicationsRoutes);
 app.use(mediaRouter);
