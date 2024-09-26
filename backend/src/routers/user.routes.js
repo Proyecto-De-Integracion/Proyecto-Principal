@@ -1,10 +1,5 @@
 import Router from "express";
-import {
-  login,
-  logout,
-  register,
-  secureAccess,
-} from "../controllers/user.controllers.js";
+import { login, logout, register, secureAccess } from "../controllers/user.controllers.js";
 import validatorJWT from "../middlewares/validatorJWT.js";
 
 const userRouter = Router();
