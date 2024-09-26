@@ -1,13 +1,11 @@
 import mongoose from "mongoose";
 import { publications } from "../models/publications.model.js";
 import { deletesFiles } from "../utils/deletePath.js";
-import {
-  multimediaFormat,
-  singlMediaFormat,
-} from "../utils/savePublications.js";
+import { multimediaFormat, singlMediaFormat } from "../utils/savePublications.js";
 import fs from "fs-extra";
+import { deleteImage, deleteVideo } from "../helpers/cloudinary.js";
 
-export const getPublications = async (req, res) => {
+export const publicationGetter = async (req, res) => {
   try {
     const publicCollections = await publications.find();
     res.status(200).json(publicCollections);
@@ -16,20 +14,26 @@ export const getPublications = async (req, res) => {
   }
 };
 
-export const getPublicationsById = async (req, res) => {
+export const postFinderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const publicationsSearched = await publications.findById(id)
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) return res.status(404).json({ message: "invalid id" });
+    const publicationsSearched = await publications.findById(id);
+    if (!publicationsSearched)
+      return res.status(404).json({
+        message: "There is no publication",
+      });
     res.status(200).json(publicationsSearched);
   } catch (error) {
     console.log(error);
   }
 };
 
-export const createPublications = async (req, res) => {
+export const postCreator = async (req, res) => {
   try {
-    const { title, description, location, category } = req.body;
-    
+    const { title, description, location, category, startDate, endDate } = req.body;
+
     const idUser = req.user._id;
     if (req.files?.media) {
       const mediaFiles = req.files.media;
@@ -41,19 +45,16 @@ export const createPublications = async (req, res) => {
         const tempFilePaths = mediaFiles.map((Element) => {
           return Element.tempFilePath;
         });
-        const { photo, video } = await multimediaFormat(
-          mediaFiles,
-          mimetypes,
-          tempFilePaths
-        );
+        const { photo, video } = await multimediaFormat(mediaFiles, mimetypes, tempFilePaths);
         const newPublications = new publications({
           titles: title,
           idUsers: idUser,
           descriptions: description,
           locations: location,
-          categorys:category
+          categorys: category,
+          startDates: startDate,
+          endDates: endDate,
         });
-
 
         newPublications.medias.photos.push(...photo);
         newPublications.medias.videos.push(...video);
@@ -67,7 +68,9 @@ export const createPublications = async (req, res) => {
           idUsers: idUser,
           descriptions: description,
           locations: location,
-          categorys:category
+          categorys: category,
+          startDates: startDate,
+          endDates: endDate,
         });
         const { video, photo } = await singlMediaFormat(mediaFiles);
         newPublications.medias.photos.push(...photo);
@@ -82,7 +85,9 @@ export const createPublications = async (req, res) => {
         idUsers: idUser,
         descriptions: description,
         locations: location,
-        categorys:category
+        categorys: category,
+        startDates: startDate,
+        endDates: endDate,
       });
       await newPublications.save();
       return res.json({ message: "Post created successfully" });
@@ -93,60 +98,95 @@ export const createPublications = async (req, res) => {
   }
 };
 
-export const updatedPublications = async (req, res) => {
+export const postUpdater = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, location, category } = req.body;
-    
+    const { title, description, location, category, startDate, endDate } = req.body;
+
     const valor = mongoose.Types.ObjectId.isValid(id);
 
     if (!valor) res.status(404).json({ message: "invalid id" });
-    
-    const publication = await publications.findById(id);
-    
-    
+
     if (req.files?.media) {
       const media = req.files.media;
       const isAnArray = Array.isArray(media);
       if (!isAnArray) {
-        const {video,photo}= await singlMediaFormat(media);
-        publication.medias.photos.push(...photo);
-        publication.medias.videos.push(...video);
-        publication.titles = title; 
-        publication.descriptions = description; 
-        publication.locations = location; 
-        publication.categorys = category;  
-        await publication.save();
-        res.status(200).json({
-          message:'publication updated successfully'
-        })
-      } else {
-        const type = media.map(e=>{
-          return e.mimetype
-        })
-        const path = media.map(e=>{
-          return e.tempFilePath
-        })
-        const { photo, video } = await multimediaFormat(media,type,path)
-        photo.forEach(async(e)=>{
-        await publications.findByIdAndUpdate(id,{$push:{'medias.photos':{ _id: e._id , url: e.url}}},{new:true})
+        const { video, photo } = await singlMediaFormat(media);
+
+        if (media.mimetype === "video/mp4") {
+          await publications.findByIdAndUpdate(
+            id,
+            {
+              $push: {
+                "medias.videos": { _id: video[0]._id, url: video[0].url },
+              },
+            },
+            { new: true }
+          );
+        } else if (media.mimetype === "image/png" || media.mimetype === "image/jpeg") {
+          await publications.findByIdAndUpdate(
+            id,
+            {
+              $push: {
+                "medias.photos": { _id: photo[0]._id, url: photo[0].url },
+              },
+            },
+            { new: true }
+          );
         }
-      );
-      video.forEach(async(e)=>{
-        await publications.findByIdAndUpdate(id,{$push:{'medias.videos':{_id: e._id, url: e.url }}},{new:true})
-      });
-      const publicationUpdate = await publications.findByIdAndUpdate(id,
-        {$set:{
-          titles:title,
-          descriptions:description,
-          locations:location,
-          categorys: category
-        }},{new:true}
-      )
-      console.log(publicationUpdate);
-      
-      }
+        await publications.findByIdAndUpdate(
+          id,
+          {
+            $set: {
+              titles: title,
+              descriptions: description,
+              locations: location,
+              categorys: category,
+              startDates: startDate,
+              endDates: endDate,
+            },
+          },
+          { new: true }
+        );
+
+        await fs.unlink(media.tempFilePath);
+        return res.status(200).json({
+          message: "publication updated successfully",
+        });
       } else {
+        const type = media.map((e) => {
+          return e.mimetype;
+        });
+        const path = media.map((e) => {
+          return e.tempFilePath;
+        });
+        const { photo, video } = await multimediaFormat(media, type, path);
+        photo.forEach(async (e) => {
+          await publications.findByIdAndUpdate(id, { $push: { "medias.photos": { _id: e._id, url: e.url } } }, { new: true });
+        });
+        video.forEach(async (e) => {
+          await publications.findByIdAndUpdate(id, { $push: { "medias.videos": { _id: e._id, url: e.url } } }, { new: true });
+        });
+        await publications.findByIdAndUpdate(
+          id,
+          {
+            $set: {
+              titles: title,
+              descriptions: description,
+              locations: location,
+              categorys: category,
+              startDates: startDate,
+              endDates: endDate,
+            },
+          },
+          { new: true }
+        );
+        await deletesFiles(path);
+        return res.status(200).json({
+          message: "publication updated successfully",
+        });
+      }
+    } else {
       await publications.findByIdAndUpdate(
         id,
         {
@@ -154,15 +194,58 @@ export const updatedPublications = async (req, res) => {
             titles: title,
             descriptions: description,
             locations: location,
-            categorys:category,
+            categorys: category,
+            startDates: startDate,
+            endDates: endDate,
           },
         },
         { new: true }
       );
       return res.json({
-        message:'publication updated successfully'
-      })
-    } 
+        message: "publication updated successfully",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const postRemover = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) return res.status(404).json({ message: "Publication not found" });
+
+    const publication = await publications.findById(id);
+    const ThereAreVideos = Boolean(publication.medias.videos.length);
+    const ThereAreImages = Boolean(publication.medias.photos.length);
+    const video = publication.medias.videos;
+    const image = publication.medias.photos;
+
+    if (ThereAreImages) {
+      if (image.length > 1) {
+        image.forEach(async (e) => {
+          await deleteImage(e._id);
+        });
+      } else {
+        await deleteImage(image[0]._id);
+      }
+    }
+
+    if (ThereAreVideos) {
+      if (video.length > 1) {
+        video.forEach(async (e) => {
+          await deleteVideo(e._id);
+        });
+      } else {
+        await deleteVideo(video[0]._id);
+      }
+    }
+
+    await publications.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "post deleted successfully",
+    });
   } catch (error) {
     console.log(error);
   }
