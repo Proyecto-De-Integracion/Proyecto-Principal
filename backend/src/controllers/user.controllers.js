@@ -25,15 +25,10 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const userSearched = await user.findOne({ emails: email });
 
-    if (!userSearched)
-      res.status(401).json({ message: "Invalid email or password" });
-    const isValidPassword = await bcrypt.compare(
-      password,
-      userSearched.passwords
-    );
+    if (!userSearched) res.status(401).json({ message: "Invalid email or password" });
+    const isValidPassword = await bcrypt.compare(password, userSearched.passwords);
 
-    if (!isValidPassword)
-      res.status(401).json({ message: "Invalid email or password" });
+    if (!isValidPassword) res.status(401).json({ message: "Invalid email or password" });
 
     const token = await generateJWT(userSearched._id);
 
@@ -65,5 +60,21 @@ export const secureAccess = (req, res) => {
     }
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const logout = (req, res) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Error al cerrar sesión" });
+      }
+
+      res.clearCookie("authToken");
+      return res.json({ message: "Cierre de sesión exitoso" });
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error Inesperado" });
   }
 };

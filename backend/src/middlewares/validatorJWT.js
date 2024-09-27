@@ -20,12 +20,14 @@ export default async (req, res, next) => {
 
     const token = req.cookies.authToken || req.session.token;
     if (!token) {
-      res.status(403).json({ message: "Token no proporcionado" });
+      res.status(403).json({ message: "You do not have the authorization" });
     }
     const decoded = jwt.verify(token, SECRET_KEY);
     const userSearched = await user.findById(decoded.id);
     if (!userSearched) {
-      res.status(401).json({ message: "Token Inválido" });
+      res
+        .status(401)
+        .json({ message: "Your authorization has already expired" });
     }
     req.user = userSearched;
     next();

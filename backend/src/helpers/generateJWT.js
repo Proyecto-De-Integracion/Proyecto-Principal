@@ -8,7 +8,7 @@ export default (id) => {
       payLoad,
       SECRET_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "2h",
       },
       (error, token) => {
         if (error) {
