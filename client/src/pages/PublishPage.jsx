@@ -1,7 +1,7 @@
 import React from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useMediaQuery, CssBaseline, Box } from "@mui/material";
-import { Content } from "../Components/Content.jsx";
+import { Content2 } from "../Components/ContentForm.jsx";
 import { Header } from "../Components/Header.jsx";
 ("../Components/Header.jsx");
 import { Navigator } from "../Components/Nav.jsx";
@@ -150,7 +150,7 @@ theme = {
 };
 
 const drawerWidth = 256;
-export function HomePage() {
+export function Publish() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -185,7 +185,7 @@ export function HomePage() {
             component="main"
             sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
           >
-            <Content />
+            <Content2 />
           </Box>
           <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}></Box>
         </Box>

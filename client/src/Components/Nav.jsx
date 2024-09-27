@@ -9,85 +9,111 @@ import {
   ListItemText,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import PublishIcon from "@mui/icons-material/Publish";
 import PeopleIcon from "@mui/icons-material/People";
-import DnsRoundedIcon from "@mui/icons-material/DnsRounded";
-import PermMediaOutlinedIcon from "@mui/icons-material/PhotoSizeSelectActual";
 import PublicIcon from "@mui/icons-material/Public";
-import SettingsEthernetIcon from "@mui/icons-material/SettingsEthernet";
-import SettingsInputComponentIcon from "@mui/icons-material/SettingsInputComponent";
 import TimerIcon from "@mui/icons-material/Timer";
 import SettingsIcon from "@mui/icons-material/Settings";
-import PhonelinkSetupIcon from "@mui/icons-material/PhonelinkSetup";
+import { useNavigate, useLocation } from "react-router-dom";
 
+// Categories for Navigator
 const categories = [
   {
-    id: "Build",
+    id: "Field#1",
     children: [
-      {
-        id: "Authentication",
-        icon: <PeopleIcon />,
-        active: true,
-      },
-      { id: "Database", icon: <DnsRoundedIcon /> },
-      { id: "Storage", icon: <PermMediaOutlinedIcon /> },
-      { id: "Hosting", icon: <PublicIcon /> },
-      { id: "Functions", icon: <SettingsEthernetIcon /> },
-      {
-        id: "Machine learning",
-        icon: <SettingsInputComponentIcon />,
-      },
+      { id: "Events", icon: <PublicIcon />, route: "/home" },
+      { id: "Profile", icon: <PeopleIcon />, route: "/profile" },
+      { id: "Publish", icon: <PublishIcon />, route: "/publish" },
     ],
   },
   {
-    id: "Quality",
+    id: "Field#2",
     children: [
-      { id: "Analytics", icon: <SettingsIcon /> },
-      { id: "Performance", icon: <TimerIcon /> },
-      { id: "Test Lab", icon: <PhonelinkSetupIcon /> },
+      { id: "Settings", icon: <SettingsIcon />, route: "/settings" },
+      { id: "Performance", icon: <TimerIcon />, route: "/performance" },
     ],
   },
 ];
 
+// Styles
 const item = {
-  py: "2px",
+  py: 2,
   px: 3,
-  color: "rgba(255, 255, 255, 0.7)",
+  color: "rgba(255, 255, 255, 0.8)",
+  transition: "background 0.3s ease",
   "&:hover, &:focus": {
-    bgcolor: "rgba(255, 255, 255, 0.08)",
+    bgcolor: "rgba(255, 255, 255, 0.1)",
   },
 };
 
 const itemCategory = {
-  boxShadow: "0 -1px 0 rgb(255,255,255,0.1) inset",
-  py: 1.5,
+  fontSize: "1rem",
+  py: 2,
   px: 3,
+  textTransform: "uppercase",
+  fontWeight: "bold",
+  color: "#fff",
+  bgcolor: "#2C3E50",
+  boxShadow: "0 -1px 0 rgba(255,255,255,0.1) inset",
 };
 
 export function Navigator(props) {
   const { ...other } = props;
+
+  const navigate = useNavigate();
+  const location = useLocation(); // Get the current route
+
+  const handleClick = (route) => {
+    navigate(route);
+  };
+
   return (
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
-        <ListItem
-          sx={{ ...item, ...itemCategory, fontSize: 22, color: "#fff" }}
-        >
+        {/* Main Title */}
+        <ListItem sx={{ ...item, ...itemCategory, fontSize: 22 }}>
           ViewsEvent
         </ListItem>
+
+        {/* Home Section */}
         <ListItem sx={{ ...item, ...itemCategory }}>
           <ListItemIcon>
-            <HomeIcon />
+            <HomeIcon sx={{ color: "#FFF" }} />
           </ListItemIcon>
-          <ListItemText>Project Overview</ListItemText>
+          <ListItemText sx={{ color: "#FFF" }}>Home</ListItemText>
         </ListItem>
+
+        {/* Category Loop */}
         {categories.map(({ id, children }) => (
-          <Box key={id} sx={{ bgcolor: "#101F33" }}>
-            <ListItem sx={{ py: 2, px: 3 }}>
-              <ListItemText sx={{ color: "#fff" }}>{id}</ListItemText>
+          <Box key={id} sx={{ bgcolor: "#11212D" }}>
+            {/* Category Title */}
+            <ListItem sx={itemCategory}>
+              <ListItemText>{id}</ListItemText>
             </ListItem>
-            {children.map(({ id: childId, icon, active }) => (
+            {children.map(({ id: childId, icon, route }) => (
               <ListItem disablePadding key={childId}>
-                <ListItemButton selected={active} sx={item}>
-                  <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemButton
+                  selected={location.pathname === route} // Check if the current route matches the button's route
+                  sx={{
+                    ...item,
+                    bgcolor:
+                      location.pathname === route
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "inherit",
+                    borderLeft:
+                      location.pathname === route
+                        ? "4px solid #FF6F61"
+                        : "none",
+                  }}
+                  onClick={() => handleClick(route)}
+                >
+                  <ListItemIcon
+                    sx={{
+                      color: location.pathname === route ? "#FF6F61" : "#FFF",
+                    }}
+                  >
+                    {icon}
+                  </ListItemIcon>
                   <ListItemText>{childId}</ListItemText>
                 </ListItemButton>
               </ListItem>
