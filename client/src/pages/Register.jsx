@@ -1,8 +1,8 @@
-// src/pages/Register.jsx
 import { useState } from "react";
 import { registerUser } from "../api/auth";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import video from "../assets/video 1.mp4";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -40,10 +40,10 @@ const Register = () => {
           icon: "success",
           title: "Usuario creado con éxito",
           text: "Redirigiendo al login...",
-          timer: 3000, // 3 segundos
+          timer: 3000,
           timerProgressBar: true,
           willClose: () => {
-            navigate("/login"); // Redirigir después de cerrar SweetAlert
+            navigate("/login");
           },
         });
       } else {
@@ -62,13 +62,15 @@ const Register = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-lg px-10 py-10 rounded-3xl bg-white border-2 border-gray-100">
-        <h1 className="text-5xl font-semibold">Registrarse</h1>
-        <p className="font-medium text-lg text-gray-500 mt-4">
-          ¡Bienvenido! Por favor, ingresa tus detalles.
-        </p>
-        <div className="mt-6">
-          <form onSubmit={handleSubmit}>
+      {/* Contenedor dividido en dos columnas */}
+      <div className="flex w-full max-w-6xl bg-white shadow-lg rounded-3xl overflow-hidden">
+        {/* Columna izquierda: Formulario */}
+        <div className="w-1/2 p-10">
+          <h1 className="text-5xl font-semibold">Registrarse</h1>
+          <p className="font-medium text-lg text-gray-500 mt-4">
+            ¡Bienvenido! Por favor, ingresa tus detalles.
+          </p>
+          <form onSubmit={handleSubmit} className="mt-6">
             <div className="flex flex-col">
               <label className="text-lg font-medium">Nombre de usuario</label>
               <input
@@ -136,14 +138,28 @@ const Register = () => {
               </button>
             </div>
           </form>
-          <div className="mt-6 flex justify-center items-center">
-            <p className="font-medium text-base">¿Ya tienes una cuenta?</p>
-            <button
-              onClick={() => navigate("/login")}
-              className="ml-2 font-medium text-base text-violet-500"
-            >
-              Iniciar sesión
-            </button>
+        </div>
+
+        {/* Columna derecha: Video y título */}
+        <div className="w-1/2 relative">
+          <video
+            className="w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            src={video} // Cambiado aquí
+          />
+          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-black bg-opacity-50">
+            <h2 className="text-4xl text-white font-bold">ViewsEvent</h2>
+            <p className="mt-4 text-white text-lg">
+              ¿Ya tienes una cuenta?{" "}
+              <button
+                onClick={() => navigate("/login")}
+                className="underline text-violet-300"
+              >
+                Iniciar sesión
+              </button>
+            </p>
           </div>
         </div>
       </div>

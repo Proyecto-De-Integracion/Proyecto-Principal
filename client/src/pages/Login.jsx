@@ -1,8 +1,8 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import { loginUser } from "../api/auth";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import video from "../assets/video 1.mp4";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -128,15 +128,28 @@ const Login = () => {
               </button>
             </div>
           </form>
-          <div className="mt-6 flex justify-center items-center">
-            <p className="font-medium text-base">¿No tienes una cuenta?</p>
+        </div>
+      </div>
+      {/* Columna derecha: Video y título */}
+      <div className="w-1/2 h-full relative">
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          src={video}
+        />
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-black bg-opacity-50">
+          <h2 className="text-4xl text-white font-bold">ViewsEvent</h2>
+          <p className="mt-4 text-white text-lg">
+            ¿No tienes una cuenta?{" "}
             <button
               onClick={() => navigate("/register")}
-              className="ml-2 font-medium text-base text-violet-500"
+              className="underline text-violet-300"
             >
               Regístrate
             </button>
-          </div>
+          </p>
         </div>
       </div>
     </div>
