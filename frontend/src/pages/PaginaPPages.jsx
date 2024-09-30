@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import foto1 from "../img/calidad5.jpg";
+import foto1 from "../assets/img/calidad5.jpg";
 import "./css/MainPages.css";
 
 function MainPage() {
