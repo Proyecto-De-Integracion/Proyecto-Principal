@@ -10,32 +10,31 @@ import cookieParser from "cookie-parser";
 import publicationsRoutes from "./routers/publications.routes.js";
 import fileUpload from "express-fileupload";
 import mediaRouter from "./routers/medias.routes.js";
+import path from "path"; // Asegúrate de importar path
 
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["http://localhost:5500", "http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: "http://localhost:5173",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
-app.use(
-  session({
-    secret: SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "./src/uploads",
   })
 );
 app.use(cookieParser());
+app.use(session({
+  secret: SECRET_KEY,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    maxAge: 3600000,
+  },
+}));
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(userRouter);
 app.use(publicationsRoutes);
 app.use(mediaRouter);

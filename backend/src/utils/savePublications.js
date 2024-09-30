@@ -3,6 +3,8 @@ import { uploadImage, uploadVideo } from "../helpers/cloudinary.js";
 export const multimediaFormat = async (arrai0, arrai1, arrai2) => {
   const photo = [];
   const video = [];
+
+  // Recorrer el arreglo de archivos
   for (let i = 0; i < arrai0.length; i++) {
     if (arrai1[i] === "video/mp4") {
       try {
@@ -16,7 +18,8 @@ export const multimediaFormat = async (arrai0, arrai1, arrai2) => {
       }
     }
 
-    if (arrai1[i] === "image/png" || arrai1[i] === "image/jpeg") {
+    // Filtrar imágenes por tipo, manejando más formatos
+    if (arrai1[i] === "image/png" || arrai1[1] === "image/jpeg") {
       try {
         const resultImage = await uploadImage(arrai2[i]);
         photo.push({
@@ -24,10 +27,11 @@ export const multimediaFormat = async (arrai0, arrai1, arrai2) => {
           url: resultImage.secure_url,
         });
       } catch (error) {
-        console.error("Error al subir imagen: ", error);
+        console.error("Error al subir imagen:", error);
       }
     }
   }
+
   return { photo, video };
 };
 
@@ -35,12 +39,16 @@ export const singlMediaFormat = async (file) => {
   const video = [];
   const photo = [];
   if (file.mimetype === "video/mp4") {
+    console.log("video");
+    console.log(file.tempFilePath);
     const resultVideo = await uploadVideo(file.tempFilePath);
     video.push({
       _id: resultVideo.public_id,
       url: resultVideo.secure_url,
     });
   } else if (file.mimetype === "image/png" || file.mimetype === "image/jpeg") {
+    console.log("Image");
+    console.log(file.tempFilePath);
     const resultImage = await uploadImage(file.tempFilePath);
     photo.push({
       _id: resultImage.public_id,

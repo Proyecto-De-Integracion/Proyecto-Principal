@@ -1,14 +1,20 @@
 import Router from "express";
-import { login, logout, register, secureAccess } from "../controllers/user.controllers.js";
+import {
+  login,
+  logout,
+  register,
+  updateProfilePicture,
+  getSession,
+} from "../controllers/user.controllers.js";
 import validatorJWT from "../middlewares/validatorJWT.js";
-import { loginValidations, registerValidations } from "../validations/validation.js";
-import { validator } from "../validator/validator.js";
+import uploadProfilePicture from "../middlewares/upload.js";
 
 const userRouter = Router();
 
-userRouter.post("/register", registerValidations, validator, register);
-userRouter.post("/login", loginValidations, validator, login);
-userRouter.get("/session", validatorJWT, secureAccess);
+userRouter.post("/register", register);
+userRouter.post("/login", login);
+userRouter.get("/session", validatorJWT, getSession);
 userRouter.post("/logout", logout);
+userRouter.post("/profile-picture", validatorJWT, uploadProfilePicture, updateProfilePicture);
 
 export default userRouter;

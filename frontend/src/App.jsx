@@ -1,25 +1,51 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import RegisterPage from "./pages/RegisterPages.jsx";
-import LoginPage from "./pages/LoginPages.jsx";
-import PaginaPrincipal from "./pages/PaginaPPages.jsx";
-import { AuthProvider } from "./context/User.Context.jsx"; // Asegúrate de importar correctamente el AuthProvider
-import { HomePage } from "./pages/HomePages.jsx";
-import { Publish } from "./pages/PublishPage.jsx";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import HomePage from "./pages/Home.jsx";
+import Publish from "./pages/PublishPage.jsx";
+import PrivateRoute from "./router/PrivateRoute.jsx";
+import PublicRoute from "./router/PublicRoute.jsx";
 
-function App() {
+const App = () => {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<PaginaPrincipal />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/publish" element={<Publish />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <Router>
+      <Routes>
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <HomePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/publish"
+          element={
+            <PrivateRoute>
+              <Publish />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

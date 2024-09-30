@@ -4,10 +4,7 @@ import color from "chalk";
 const database = async () => {
   try {
     await mongo.connect(URL_DB);
-    console.log("--------------------------------------");
     console.log(color.magenta("database connected successfully"));
-    console.log("--------------------------------------");
-
     return mongo.connection;
   } catch (error) {
     console.log("--------------------------------------");

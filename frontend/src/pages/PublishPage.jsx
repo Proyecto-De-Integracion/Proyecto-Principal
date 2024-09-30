@@ -193,3 +193,5 @@ export function Publish() {
     </ThemeProvider>
   );
 }
+
+export default Publish;
