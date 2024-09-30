@@ -32,7 +32,7 @@ export const postFinderById = async (req, res) => {
 
 export const postCreator = async (req, res) => {
   try {
-    const { title, description, location, category, startDate, endDate } = req.body;
+    const { title, description, lat, long, category, startDate, endDate } = req.body;
 
     const idUser = req.user._id;
     if (req.files?.media) {
@@ -50,7 +50,7 @@ export const postCreator = async (req, res) => {
           titles: title,
           idUsers: idUser,
           descriptions: description,
-          locations: location,
+          locations: { lat: lat, long: long },
           categorys: category,
           startDates: startDate,
           endDates: endDate,
