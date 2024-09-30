@@ -1,20 +1,14 @@
-import mongo from "mongoose";
-import { URL_DB } from "../config/config.js";
-import color from "chalk";
-const database = async () => {
+//export default database
+import { MongoClient } from "mongodb";
+
+const client = new MongoClient(uri);
+
+export async function run() {
   try {
-    await mongo.connect(URL_DB);
-    console.log("--------------------------------------");
-    console.log(color.magenta("database connected successfully"));
-    console.log("--------------------------------------");
+    await client.connect();
 
-    return mongo.connection;
+    console.log(deleteResult);
   } catch (error) {
-    console.log("--------------------------------------");
-    console.log(color.red("Error in database connection"));
-    console.log("--------------------------------------");
-    console.log(color.yellow(error));
+    console.log("Error with", error);
   }
-};
-
-export default database;
+}
