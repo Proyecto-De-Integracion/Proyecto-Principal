@@ -4,7 +4,7 @@ const publicationsModels = new mongo.Schema(
     titles: { type: String, require: true, trim: true },
     idUsers: { type: String, require: true },
     descriptions: { type: String, require: true, trim: true },
-    locations: { type: String, require: true },
+    locations: { lat: { type: Number }, long: { type: Number } },
     categorys: { type: String, require: true },
     medias: {
       photos: [
