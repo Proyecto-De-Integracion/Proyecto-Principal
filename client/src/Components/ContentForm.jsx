@@ -11,14 +11,17 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-
 export function Content2() {
   const [activeTab, setActiveTab] = useState(0);
+
+  // Ensure all fields are initialized with an empty string
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    location: "",
-    tags: "",
+    titles: "",
+    descriptions: "",
+    locations: "",
+    categorys: "",
+    startDates: "",
+    endDates: "",
     media: null, // For media files like images or videos
   });
 
@@ -29,8 +32,8 @@ export function Content2() {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
+    // Handle file input separately
     if (files) {
-      // For file input like media
       setFormData({
         ...formData,
         [name]: files,
@@ -38,7 +41,7 @@ export function Content2() {
     } else {
       setFormData({
         ...formData,
-        [name]: value,
+        [name]: value || "", // Ensure non-file inputs always have a string value
       });
     }
   };
@@ -46,12 +49,16 @@ export function Content2() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create form data to send via POST request
+    // Prepare FormData object for submission
     const eventData = new FormData();
-    eventData.append("title", formData.title);
-    eventData.append("description", formData.description);
-    eventData.append("location", formData.location);
-    eventData.append("tags", formData.tags);
+    eventData.append("titles", formData.titles);
+    eventData.append("descriptions", formData.descriptions);
+    eventData.append("locations", formData.locations);
+    eventData.append("categorys", formData.categorys);
+    eventData.append("startDates", formData.startDates);
+    eventData.append("endDates", formData.endDates);
+
+    // Handle media files
     if (formData.media) {
       for (let i = 0; i < formData.media.length; i++) {
         eventData.append("media", formData.media[i]);
@@ -59,13 +66,20 @@ export function Content2() {
     }
 
     try {
-      // Send data to backend
-      const response = await axios.post("", eventData, {
+      const response = await fetch("http://localhost:5000/publications", {
+        method: "POST",
         headers: {
-          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        body: eventData,
       });
-      console.log(response.data); // Handle response (e.g., show success message)
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log("Publication created:", result);
+      } else {
+        console.error("Error:", result);
+      }
     } catch (error) {
       console.error("Error submitting event:", error);
     }
@@ -91,7 +105,6 @@ export function Content2() {
               Crear Nuevo Evento
             </Typography>
 
-            {/* Event Form */}
             <Box
               component="form"
               sx={{
@@ -106,8 +119,8 @@ export function Content2() {
                 label="Title"
                 variant="outlined"
                 fullWidth
-                name="title"
-                value={formData.title}
+                name="titles" // Match with formData key
+                value={formData.titles}
                 onChange={handleChange}
               />
 
@@ -118,8 +131,8 @@ export function Content2() {
                 fullWidth
                 multiline
                 rows={4}
-                name="description"
-                value={formData.description}
+                name="descriptions" // Match with formData key
+                value={formData.descriptions}
                 onChange={handleChange}
               />
 
@@ -128,8 +141,8 @@ export function Content2() {
                 label="Location"
                 variant="outlined"
                 fullWidth
-                name="location"
-                value={formData.location}
+                name="locations" // Match with formData key
+                value={formData.locations}
                 onChange={handleChange}
               />
 
@@ -138,8 +151,8 @@ export function Content2() {
                 variant="outlined"
                 fullWidth
                 helperText="Separate tags with commas"
-                name="tags"
-                value={formData.tags}
+                name="categorys" // Match with formData key
+                value={formData.categorys}
                 onChange={handleChange}
               />
 
