@@ -1,8 +1,8 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import PublishPage from "./pages/PublishPage";
 import PrivateRoute from "./router/PrivateRoute";
 import PublicRoute from "./router/PublicRoute";
 
@@ -15,6 +15,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/publish"
+          element={
+            <PrivateRoute>
+              <PublishPage />
             </PrivateRoute>
           }
         />
@@ -34,7 +42,7 @@ const App = () => {
             </PublicRoute>
           }
         />
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={"holis"} />
       </Routes>
     </Router>
   );

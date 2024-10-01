@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   AppBar,
   Paper,
@@ -10,7 +10,6 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 export function Content2() {
   const [activeTab, setActiveTab] = useState(0);
 

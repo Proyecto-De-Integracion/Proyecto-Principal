@@ -83,7 +83,6 @@ export const updateProfilePicture = async (req, res) => {
 
     const profilePicturePath = `${baseUrl}/uploads/${req.file.filename}`;
 
-    // Actualiza la imagen en la base de datos
     await User.updateOne({ _id: req.user.id }, { profilePicture: profilePicturePath });
 
     return res.status(200).json({ message: "Foto de perfil actualizada con éxito", profilePicture: profilePicturePath });

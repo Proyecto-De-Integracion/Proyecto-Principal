@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import publicationsRoutes from "./routers/publications.routes.js";
 import fileUpload from "express-fileupload";
 import mediaRouter from "./routers/medias.routes.js";
-import path from "path"; // Asegúrate de importar path
+import path from "path";
 
 const app = express();
 app.use(express.json());

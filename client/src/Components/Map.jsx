@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Replace with your HERE Maps API key
 const apiKey = "-ijxS-BfcuGXeFpSbQB6o7TT6ty2l1MV0zFbI-cs1a4";

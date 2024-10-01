@@ -1,28 +1,51 @@
-import React from "react";
 import {
   AppBar,
   Toolbar,
   IconButton,
   Tooltip,
-  Avatar,
   Button,
   Typography,
+  Box,
+  TextField,
 } from "@mui/material";
-import { Menu as MenuIcon, Notifications, Help } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  Notifications,
+  Help,
+  Search as SearchIcon,
+} from "@mui/icons-material";
 import Grid2 from "@mui/material/Grid2";
+import { useEffect, useState } from "react";
+import { getSession } from "../api/auth";
 
-// New color and design improvements
 const headerBgColor = "#11212D";
 const lightColor = "rgba(255, 255, 255, 0.7)";
+const buttonHoverColor = "#FF6F61";
 
 export function Header(props) {
   const { onDrawerToggle } = props;
 
+  const [user, setUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const res = await getSession();
+      if (res.user) {
+        setUser(res.user);
+      }
+    };
+    fetchSession();
+  }, []);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
     <AppBar position="sticky" elevation={0} sx={{ bgcolor: headerBgColor }}>
-      <Toolbar sx={{ minHeight: 64 }}>
-        <Grid2 container spacing={1} alignItems="center">
-          {/* Drawer Toggle for Mobile */}
+      <Toolbar sx={{ minHeight: 64, justifyContent: "space-between" }}>
+        <Grid2 container alignItems="center" justifyContent="center">
           <Grid2 sx={{ display: { xs: "block", sm: "none" } }}>
             <IconButton
               color="inherit"
@@ -34,20 +57,18 @@ export function Header(props) {
             </IconButton>
           </Grid2>
 
-          {/* App Title */}
-          <Grid2 sx={{ flexGrow: 1 }}>
-            <Typography
-              variant="h5"
-              component="h1"
-              color="inherit"
-              sx={{ textAlign: { xs: "center", sm: "left" } }}
-            >
+          <Grid2 sx={{ flexGrow: 1, textAlign: "center" }}>
+            <Typography variant="h5" component="h1" color="inherit">
               ViewsEvent
             </Typography>
           </Grid2>
 
-          {/* Help & Notifications */}
-          <Grid2 container spacing={1} alignItems="center">
+          <Grid2
+            container
+            spacing={1}
+            alignItems="center"
+            justifyContent="center"
+          >
             <Grid2>
               <Tooltip title="Help">
                 <IconButton color="inherit">
@@ -64,24 +85,36 @@ export function Header(props) {
             </Grid2>
           </Grid2>
 
-          {/* Login Button */}
-          <Button
-            sx={{
-              borderColor: lightColor,
-              color: lightColor,
-              ml: 2,
-              borderWidth: 2,
-            }}
-            variant="outlined"
-            size="small"
-          >
-            Logout
-          </Button>
-
-          {/* User Avatar */}
-          <IconButton color="inherit" sx={{ p: 0.5, ml: 2 }}>
-            <Avatar />
-          </IconButton>
+          {/* Campo de búsqueda */}
+          <Grid2 sx={{ mx: 2 }}>
+            <Box sx={{ position: "relative" }}>
+              <TextField
+                variant="outlined"
+                size="small"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                sx={{
+                  bgcolor: "white",
+                  borderRadius: 2,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#ccc",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: buttonHoverColor,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: buttonHoverColor,
+                    },
+                  },
+                }}
+                InputProps={{
+                  startAdornment: <SearchIcon sx={{ color: "#999", mr: 1 }} />,
+                }}
+              />
+            </Box>
+          </Grid2>
         </Grid2>
       </Toolbar>
     </AppBar>
