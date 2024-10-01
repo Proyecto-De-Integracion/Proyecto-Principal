@@ -255,7 +255,7 @@ export const postRemover = async (req, res) => {
 export const categoryPostGetter = async (req, res) => {
   try {
     const { category } = req.params;
-    const publicationsSearched = await publications.findOne({ categorys: category }).exec();
+    const publicationsSearched = await publications.find({ categorys: category }).exec();
     if (!publicationsSearched) return res.status(404).json({ message: "no hay eventos con esa categoría" });
     res.status(200).json({ message: "Resultados de Búsqueda", publicationsSearched });
   } catch (error) {
@@ -272,7 +272,7 @@ export const categoryPostGetter = async (req, res) => {
 export const publicationGetterByTitle = async (req, res) => {
   try {
     const { title } = req.params;
-    const publicationsSearched = await publications.findOne({ titles: new RegExp(title, "i") }).exec();
+    const publicationsSearched = await publications.find({ titles: new RegExp(title, "i") }).exec();
     if (!publicationsSearched) return res.status(404).json({ message: "no hay Eventos con ese titulo" });
     res.status(200).json({ message: "Resultados de Búsqueda", publicationsSearched });
   } catch (error) {
