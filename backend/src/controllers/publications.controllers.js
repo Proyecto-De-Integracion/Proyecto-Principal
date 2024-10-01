@@ -4,6 +4,7 @@ import { deletesFiles } from "../utils/deletePath.js";
 import { multimediaFormat, singlMediaFormat } from "../utils/savePublications.js";
 import fs from "fs-extra";
 import { deleteImage, deleteVideo } from "../helpers/cloudinary.js";
+import color from "chalk";
 
 export const publicationGetter = async (req, res) => {
   try {
@@ -251,7 +252,36 @@ export const postRemover = async (req, res) => {
   }
 };
 
-export const categoryPostGetter = (req, res) => {
-  const { category } = req.params;
-  console.log(category);
+export const categoryPostGetter = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const publicationsSearched = await publications.findOne({ categorys: category }).exec();
+    if (!publicationsSearched) return res.status(404).json({ message: "no hay eventos con esa categoría" });
+    res.status(200).json({ message: "Resultados de Búsqueda", publicationsSearched });
+  } catch (error) {
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("                       Error en la búsqueda de Eventos por categoría"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log();
+    console.log(error);
+    console.log();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+  }
+};
+
+export const publicationGetterByTitle = async (req, res) => {
+  try {
+    const { title } = req.params;
+    const publicationsSearched = await publications.findOne({ titles: new RegExp(title, "i") }).exec();
+    if (!publicationsSearched) return res.status(404).json({ message: "no hay Eventos con ese titulo" });
+    res.status(200).json({ message: "Resultados de Búsqueda", publicationsSearched });
+  } catch (error) {
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("                       Error en la búsqueda de Eventos por categoría"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log();
+    console.log(error);
+    console.log();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+  }
 };

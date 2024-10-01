@@ -15,7 +15,7 @@
 2.  **Login**
 
     - http://localhost:4000/login
-    - _en esta ruta el usuario debe mandar por_ [ body ] _los siguientes datos_ {password, email} _para realizar correctamente su acceso_
+    - _en esta ruta el usuario debe mandar por_ [ body ] _los siguientes datos_ { password, email } _para realizar correctamente su acceso_
 
 3.  **session**
 
