@@ -27,4 +27,17 @@
     - http://localhost:4000/logout
     - _por ultimo de las rutas de los usuario esta el **logout** que en pocas palabras seria como un cerrar session_
 
+5.  **userUpdated**
+    - http://localhost:4000/userUpdated
+    - _esta ruta te permitirá actualizar los datos del usuario una ves validado y logueado los datos que puede recibir son imagen/png/jpeg { username, email } si preguntas porque no esta las contraseña tampoco es porque la contraseña para cambiar debe tener un proceso mas grande_
+
 #### Rutas de Eventos
+
+1.  **Para traer todas las publicaciones**
+
+    - http://localhost:4000/publications
+    - _esta ruta te permitirá traer toda las publicaciones de eventos_
+
+2.  **Para traer las publicaciones por id**
+    - http://localhost:4000/
+    - _esta ruta lo que te permitirá es que buscar las publicaciones de eventos por su id_
