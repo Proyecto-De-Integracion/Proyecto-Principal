@@ -67,7 +67,7 @@ export const postCreator = async (req, res) => {
           titles: title,
           idUsers: idUser,
           descriptions: description,
-          locations: location,
+          locations: { lat: lat, long: long },
           categorys: category,
           startDates: startDate,
           endDates: endDate,
@@ -84,7 +84,7 @@ export const postCreator = async (req, res) => {
         titles: title,
         idUsers: idUser,
         descriptions: description,
-        locations: location,
+        locations: { lat: lat, long: long },
         categorys: category,
         startDates: startDate,
         endDates: endDate,
@@ -101,7 +101,7 @@ export const postCreator = async (req, res) => {
 export const postUpdater = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, location, category, startDate, endDate } = req.body;
+    const { title, description, lat, long, category, startDate, endDate } = req.body;
 
     const valor = mongoose.Types.ObjectId.isValid(id);
 
@@ -140,7 +140,7 @@ export const postUpdater = async (req, res) => {
             $set: {
               titles: title,
               descriptions: description,
-              locations: location,
+              locations: { lat: lat, long: long },
               categorys: category,
               startDates: startDate,
               endDates: endDate,
@@ -173,7 +173,7 @@ export const postUpdater = async (req, res) => {
             $set: {
               titles: title,
               descriptions: description,
-              locations: location,
+              locations: { lat: lat, long: long },
               categorys: category,
               startDates: startDate,
               endDates: endDate,
@@ -193,7 +193,7 @@ export const postUpdater = async (req, res) => {
           $set: {
             titles: title,
             descriptions: description,
-            locations: location,
+            locations: { lat: lat, long: long },
             categorys: category,
             startDates: startDate,
             endDates: endDate,
@@ -249,4 +249,9 @@ export const postRemover = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const categoryPostGetter = (req, res) => {
+  const { category } = req.params;
+  console.log(category);
 };
