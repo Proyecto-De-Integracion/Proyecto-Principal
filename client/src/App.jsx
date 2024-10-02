@@ -26,7 +26,7 @@ const App = () => {
             </PrivateRoute>
           }
         />{" "}
-        <Route path="/profile" element={<PrivateRoute></PrivateRoute>} />
+        <Route path="/profile" element={"perfil"} />
         <Route
           path="/login"
           element={

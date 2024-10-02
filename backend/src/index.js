@@ -38,7 +38,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: isProduction,
+      secure: isProduction, // solo true en producción con HTTPS
       sameSite: isProduction ? "None" : "Lax"
     },
   })

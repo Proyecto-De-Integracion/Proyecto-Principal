@@ -37,8 +37,8 @@ export const logoutUser = async () => {
 };
 
 export const updateProfilePicture = async (formData) => {
-    const response = await fetch(`${BASE_URL}/profile-picture`, {
-        method: 'POST',
+    const response = await fetch(`${BASE_URL}/userUpdated`, {
+        method: 'PUT',
         body: formData,
         credentials: 'include',
     });
@@ -51,4 +51,5 @@ export const updateProfilePicture = async (formData) => {
         throw new Error(`Error: ${errorText}`);
     }
 };
+
 
