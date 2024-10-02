@@ -22,12 +22,13 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+export const isProduction = process.env.NODE_ENV === "production";
 app.use(
   session({
     secret: SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, sameSite: "None" },
+    cookie: { secure: isProduction, sameSite: isProduction ? "None" : "Lax" },
   })
 );
 app.use(

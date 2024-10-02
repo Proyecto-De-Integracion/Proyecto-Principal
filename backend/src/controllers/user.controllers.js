@@ -3,6 +3,7 @@ import { user } from "../models/user.model.js";
 import color from "chalk"; // Assuming the model is named User.js
 import generateJWT from "../helpers/generateJWT.js";
 import { uploadImage } from "../helpers/cloudinary.js";
+import { isProduction } from "../index.js";
 
 export const register = async (req, res) => {
   try {
@@ -43,8 +44,8 @@ export const login = async (req, res) => {
 
     res.cookie("authToken", token, {
       httpOnly: true,
-      secure: false,
-      SameSite: "None",
+      secure: isProduction,
+      SameSite: isProduction ? "None" : "Lax",
       maxAge: 3600000,
     });
 
