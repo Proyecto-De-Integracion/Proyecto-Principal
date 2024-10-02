@@ -5,6 +5,7 @@ export const registerUser = async (userData) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
+        credentials: 'include',
     });
     return response.json();
 };
