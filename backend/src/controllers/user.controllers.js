@@ -7,7 +7,7 @@ export const register = async (req, res) => {
   try {
     const { username, password, email } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new user({
+    const newUser = new User({
       usernames: username,
       passwords: hashedPassword,
       emails: email,
@@ -15,7 +15,13 @@ export const register = async (req, res) => {
     await newUser.save();
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("                                   error in user registration"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.error();
     console.error(error);
+    console.error();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
     res.status(500).json({ message: "An error occurred during registration" });
   }
 };
@@ -66,15 +72,19 @@ export const secureAccess = (req, res) => {
 export const logout = (req, res) => {
   try {
     req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: "Error al cerrar sesión" });
-      }
+      if (err) return res.status(500).json({ message: "Error al cerrar sesión" });
 
       res.clearCookie("authToken");
       return res.json({ message: "Cierre de sesión exitoso" });
     });
   } catch (error) {
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("                               An error occurred while closing the session"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.error();
     console.error(error);
-    return res.status(500).json({ message: "Error Inesperado" });
+    console.error();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    res.status(500).json({ message: "An error occurred while closing the session" });
   }
 };

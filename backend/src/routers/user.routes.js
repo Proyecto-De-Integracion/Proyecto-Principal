@@ -10,5 +10,6 @@ userRouter.post("/register", registerValidations, validator, register);
 userRouter.post("/login", loginValidations, validator, login);
 userRouter.get("/session", validatorJWT, secureAccess);
 userRouter.post("/logout", logout);
+userRouter.put("/profileUpdater");
 
 export default userRouter;
