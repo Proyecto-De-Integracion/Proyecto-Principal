@@ -17,15 +17,15 @@ import PeopleIcon from "@mui/icons-material/People";
 import PublicIcon from "@mui/icons-material/Public";
 import TimerIcon from "@mui/icons-material/Timer";
 import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout"; // Importamos LogoutIcon
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState, useRef } from "react"; // Asegúrate de importar useRef
-import { getSession, logoutUser, updateProfilePicture } from "../api/auth"; // Importamos logoutUser y updateProfilePicture
+import { useEffect, useState, useRef } from "react";
+import { getSession, logoutUser, updateProfilePicture } from "../api/auth";
 import Swal from "sweetalert2";
 
 const categories = [
   {
-    id: "Eventos y Perfil", // Renombrado
+    id: "Eventos y Perfil",
     children: [
       { id: "Eventos", icon: <PublicIcon />, route: "/home" },
       { id: "Perfil", icon: <PeopleIcon />, route: "/profile" },
@@ -33,7 +33,7 @@ const categories = [
     ],
   },
   {
-    id: "Configuraciones y Rendimiento", // Renombrado
+    id: "Configuraciones y Rendimiento",
     children: [
       { id: "Configuraciones", icon: <SettingsIcon />, route: "/settings" },
       { id: "Rendimiento", icon: <TimerIcon />, route: "/performance" },
@@ -77,7 +77,7 @@ export function Navigator(props) {
       const res = await getSession();
       if (res.user) {
         setUser(res.user);
-        setProfilePicture(res.user.profilePicture);
+        setProfilePicture(res.user.profilePicture.url); // Ajuste para acceder al URL del profilePicture
       }
     };
     fetchSession();
@@ -87,11 +87,11 @@ export function Navigator(props) {
     const file = event.target.files[0];
     if (file) {
       const formData = new FormData();
-      formData.append("profilePicture", file);
+      formData.append("media", file); // Cambio de 'profilePicture' a 'media' según el backend
 
       const res = await updateProfilePicture(formData);
-      if (res.message === "Foto de perfil actualizada con éxito") {
-        setProfilePicture(res.profilePicture);
+      if (res.message === "perfil actualizado con éxito") {
+        setProfilePicture(res.profilePicture.url); // Ajuste para actualizar el URL de la imagen
         Swal.fire("Éxito", "Foto de perfil actualizada con éxito", "success");
       } else {
         Swal.fire("Error", "No se pudo actualizar la foto de perfil", "error");
@@ -141,16 +141,13 @@ export function Navigator(props) {
           <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 1 }}>
             <Box
               sx={{
-                position: "relative", // Para permitir el posicionamiento absoluto del hover
+                position: "relative",
                 display: "inline-block",
-                cursor: "pointer", // Cambiar el cursor al pasar el mouse
+                cursor: "pointer",
               }}
               onClick={() => fileInputRef.current.click()} // Abre el input de archivo al hacer clic en el avatar
             >
-              <Avatar
-                src={profilePicture}
-                sx={{ width: 80, height: 80 }} // Tamaño reducido
-              />
+              <Avatar src={profilePicture} sx={{ width: 80, height: 80 }} />
               <Box
                 sx={{
                   position: "absolute",
@@ -158,12 +155,12 @@ export function Navigator(props) {
                   left: 0,
                   width: "100%",
                   height: "100%",
-                  borderRadius: "50%", // Asegurar que la superposición sea circular
-                  bgcolor: "rgba(255, 255, 255, 0.2)", // Fondo semitransparente
+                  borderRadius: "50%",
+                  bgcolor: "rgba(255, 255, 255, 0.2)",
                   opacity: 0,
                   transition: "opacity 0.3s ease",
                   "&:hover": {
-                    opacity: 1, // Mostrar el fondo al pasar el mouse
+                    opacity: 1,
                   },
                 }}
               />
@@ -183,10 +180,10 @@ export function Navigator(props) {
               textAlign: "center",
               bgcolor: "#11212D",
               borderRadius: "8px",
-              border: "1px solid rgba(255, 255, 255, 0.2)", // Borde con transparencia
-              p: 1, // Relleno reducido
-              mx: 2, // Margen lateral para centrar mejor
-              mb: 2, // Margen inferior
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              p: 1,
+              mx: 2,
+              mb: 2,
             }}
           >
             <Typography

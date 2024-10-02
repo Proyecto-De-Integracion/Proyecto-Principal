@@ -107,31 +107,68 @@ export const logout = (req, res) => {
   }
 };
 
-export const profileUpdater = async (req, res) => {
-  try {
-    const { id } = req.user;
-    const { email, username } = req.body;
-    if (req.files?.media) {
-      const media = req.files.media;
-      if (media.mimetype !== "image/jpeg" && media.mimetype !== "image/png") return res.status(400).json({ message: "el formato de imágenes es invalida" });
-      const rout = media.tempFilePath;
-      const result = await uploadImage(rout);
-      const userUpdated = await user.findByIdAndUpdate(id, { $set: { emails: email, usernames: username, profilePicture: { _id: result.public_id, url: result.secure_url } } }, { new: true });
-      if (!userUpdated) return res.status(404).json({ message: "no se pudo realizar la actualización de su usuario " });
-      return res.status(200).json({ message: "perfil actualizado con éxito" });
-    } else {
-      const userUpdated = await user.findByIdAndUpdate(id, { $set: { emails: email, usernames: username } }, { new: true });
-      if (!userUpdated) return res.status(404).json({ message: "no se pudo realizar la actualización de su usuario " });
-      return res.status(200).json({ message: "perfil actualizado correctamente" });
-    }
-  } catch (error) {
-    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
-    console.log(color.red("                                An error occurred while updating the user"));
-    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
-    console.error();
-    console.error(error);
-    console.error();
-    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
-    res.status(500).json({ message: "An error occurred while updating the user" });
-  }
-};
+// export const profileUpdater = async (req, res) => {
+//   try {
+//     const { id } = req.user;
+//     const { email, username } = req.body;
+
+//     if (req.files?.media) {
+//       const media = req.files.media;
+
+//       // Validación de tipo de archivo
+//       if (media.mimetype !== "image/jpeg" && media.mimetype !== "image/png") {
+//         return res.status(400).json({ message: "El formato de la imagen no es válido. Solo se permiten imágenes JPEG o PNG." });
+//       }
+
+//       const filePath = media.tempFilePath;
+
+//       // Subir imagen (Asumiendo que uploadImage devuelve la URL y el ID)
+//       const result = await uploadImage(filePath);
+
+//       // Eliminar archivo temporal después de subir
+//       fs.unlinkSync(filePath);
+
+//       // Actualizar usuario con la nueva imagen
+//       const userUpdated = await user.findByIdAndUpdate(
+//         id,
+//         {
+//           $set: {
+//             emails: email,
+//             usernames: username,
+//             profilePicture: { _id: result.public_id, url: result.secure_url }
+//           }
+//         },
+//         { new: true }
+//       );
+
+//       if (!userUpdated) {
+//         return res.status(404).json({ message: "No se pudo actualizar el perfil del usuario." });
+//       }
+
+//       return res.status(200).json({ message: "Perfil actualizado con éxito.", user: userUpdated });
+
+//     } else {
+//       // Si no hay imagen, actualizar solo el email y el username
+//       const userUpdated = await user.findByIdAndUpdate(
+//         id,
+//         { $set: { emails: email, usernames: username } },
+//         { new: true }
+//       );
+
+//       if (!userUpdated) {
+//         return res.status(404).json({ message: "No se pudo actualizar el perfil del usuario." });
+//       }
+
+//       return res.status(200).json({ message: "Perfil actualizado correctamente.", user: userUpdated });
+//     }
+
+//   } catch (error) {
+//     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+//     console.log(color.red("Ocurrió un error mientras se actualizaba el usuario"));
+//     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+//     console.error(error);
+//     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+//     return res.status(500).json({ message: "Ocurrió un error al actualizar el perfil del usuario." });
+//   }
+// };
+
