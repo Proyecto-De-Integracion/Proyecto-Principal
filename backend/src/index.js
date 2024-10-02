@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import publicationsRoutes from "./routers/publications.routes.js";
 import fileUpload from "express-fileupload";
 import mediaRouter from "./routers/medias.routes.js";
+import reqRouter from "./routers/request.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -23,12 +24,17 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+export const isProduction = process.env.NODE_ENV === "production";
 app.use(
   session({
     secret: SECRET_KEY,
     resave: false,
     saveUninitialized: true,
+<<<<<<< HEAD
     cookie: { secure: false, sameSite: 'None', },
+=======
+    cookie: { secure: isProduction, sameSite: isProduction ? "None" : "Lax" },
+>>>>>>> cb0214fc15e4d7c6fa1527efe44fa3464301fc25
   })
 );
 app.use(
@@ -41,6 +47,8 @@ app.use(cookieParser());
 app.use(userRouter);
 app.use(publicationsRoutes);
 app.use(mediaRouter);
+app.use(reqRouter);
+
 database();
 app.listen(PORT, () => {
   console.log(color.blue("server is running in http://localhost:4000"));

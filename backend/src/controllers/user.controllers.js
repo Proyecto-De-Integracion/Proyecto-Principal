@@ -3,6 +3,7 @@ import { user } from "../models/user.model.js";
 import color from "chalk"; // Assuming the model is named User.js
 import generateJWT from "../helpers/generateJWT.js";
 import { uploadImage } from "../helpers/cloudinary.js";
+import { isProduction } from "../index.js";
 
 export const register = async (req, res) => {
   try {
@@ -43,7 +44,8 @@ export const login = async (req, res) => {
 
     res.cookie("authToken", token, {
       httpOnly: true,
-      secure: false,
+      secure: isProduction,
+      SameSite: isProduction ? "None" : "Lax",
       maxAge: 3600000,
       sameSite: 'None',
     });
@@ -114,11 +116,7 @@ export const profileUpdater = async (req, res) => {
       if (media.mimetype !== "image/jpeg" && media.mimetype !== "image/png") return res.status(400).json({ message: "el formato de imágenes es invalida" });
       const rout = media.tempFilePath;
       const result = await uploadImage(rout);
-      const userUpdated = await user.findByIdAndUpdate(
-        id,
-        { $set: { emails: email, usernames: username, profilePicture: { _id: result.public_id, url: result.secure_url } } },
-        { new: true }
-      );
+      const userUpdated = await user.findByIdAndUpdate(id, { $set: { emails: email, usernames: username, profilePicture: { _id: result.public_id, url: result.secure_url } } }, { new: true });
       if (!userUpdated) return res.status(404).json({ message: "no se pudo realizar la actualización de su usuario " });
       return res.status(200).json({ message: "perfil actualizado con éxito" });
     } else {
