@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import publicationsRoutes from "./routers/publications.routes.js";
 import fileUpload from "express-fileupload";
 import mediaRouter from "./routers/medias.routes.js";
+import reqRouter from "./routers/request.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -26,7 +27,7 @@ app.use(
     secret: SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false },
+    cookie: { secure: false, sameSite: "None" },
   })
 );
 app.use(
@@ -39,6 +40,8 @@ app.use(cookieParser());
 app.use(userRouter);
 app.use(publicationsRoutes);
 app.use(mediaRouter);
+app.use(reqRouter);
+
 database();
 app.listen(PORT, () => {
   console.log(color.blue("server is running in http://localhost:4000"));
