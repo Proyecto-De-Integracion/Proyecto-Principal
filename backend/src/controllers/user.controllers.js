@@ -168,6 +168,11 @@ export const profileUpdater = async (req, res) => {
         },
         { new: true }
       );
+    } else {
+      // Si no hay imagen, actualizar solo el email y el username
+      const userUpdated = await user.findByIdAndUpdate(id, { $set: { emails: email, usernames: username } }, { new: true });
+      if (!userUpdated) return res.status(404).json({ message: "No se pudo actualizar el perfil del usuario." });
+      return res.status(200).json({ message: "Perfil actualizado correctamente.", user: userUpdated });
     }
   } catch (error) {
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
