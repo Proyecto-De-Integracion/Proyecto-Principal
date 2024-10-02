@@ -23,6 +23,7 @@ import { useEffect, useState, useRef } from "react";
 import { getSession, logoutUser, updateProfilePicture } from "../api/auth";
 import Swal from "sweetalert2";
 
+// Categorías del menú lateral
 const categories = [
   {
     id: "Eventos y Perfil",
@@ -41,8 +42,8 @@ const categories = [
   },
 ];
 
-// Styles
-const item = {
+// Estilos para los elementos del menú
+const itemStyle = {
   py: 2,
   px: 3,
   color: "rgba(255, 255, 255, 0.8)",
@@ -52,7 +53,7 @@ const item = {
   },
 };
 
-const itemCategory = {
+const itemCategoryStyle = {
   fontSize: "1rem",
   py: 2,
   px: 3,
@@ -65,7 +66,6 @@ const itemCategory = {
 
 export function Navigator(props) {
   const { ...other } = props;
-
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -89,31 +89,52 @@ export function Navigator(props) {
       const formData = new FormData();
       formData.append("media", file); // Cambio de 'profilePicture' a 'media' según el backend
 
-      const res = await updateProfilePicture(formData);
-      if (res.message === "perfil actualizado con éxito") {
-        setProfilePicture(res.profilePicture.url); // Ajuste para actualizar el URL de la imagen
-        Swal.fire("Éxito", "Foto de perfil actualizada con éxito", "success");
-      } else {
-        Swal.fire("Error", "No se pudo actualizar la foto de perfil", "error");
+      try {
+        const res = await updateProfilePicture(formData);
+        if (res.message === "perfil actualizado con éxito") {
+          setProfilePicture(res.profilePicture.url); // Ajuste para actualizar el URL de la imagen
+          Swal.fire("Éxito", "Foto de perfil actualizada con éxito", "success");
+        } else {
+          Swal.fire(
+            "Error",
+            "No se pudo actualizar la foto de perfil",
+            "error"
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire(
+          "Error",
+          "Hubo un problema al actualizar la foto de perfil",
+          "error"
+        );
       }
     }
   };
 
   const handleLogout = async () => {
-    const res = await logoutUser();
-    if (res.message === "Logout successful") {
-      Swal.fire({
-        title: "Cierre de sesión",
-        text: "Redirigiendo a la página de inicio de sesión...",
-        icon: "success",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 2000);
-    } else {
-      Swal.fire("Error", "No se pudo cerrar sesión", "error");
+    try {
+      const res = await logoutUser();
+      console.log(res); // Debugging para ver la respuesta del servidor
+      if (res && res.message === "Cierre de sesión exitoso") {
+        // Cambiar a "Cierre de sesión exitoso"
+        Swal.fire({
+          title: "Cierre de sesión",
+          text: "Redirigiendo a la página de inicio de sesión...",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        setTimeout(() => {
+          window.location.href = "/login"; // Redirige a la página de inicio de sesión
+        }, 2000);
+      } else {
+        // Si la respuesta no es la esperada, muestra un error
+        Swal.fire("Error", "No se pudo cerrar sesión", "error");
+      }
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error); // Muestra el error en la consola
+      Swal.fire("Error", "Hubo un problema al cerrar sesión", "error");
     }
   };
 
@@ -132,8 +153,8 @@ export function Navigator(props) {
         }}
       >
         <List disablePadding>
-          {/* Main Title */}
-          <ListItem sx={{ ...item, ...itemCategory, fontSize: 22 }}>
+          {/* Título Principal */}
+          <ListItem sx={{ ...itemStyle, ...itemCategoryStyle, fontSize: 22 }}>
             ViewsEvent
           </ListItem>
 
@@ -197,11 +218,11 @@ export function Navigator(props) {
             </Typography>
           </Box>
 
-          {/* Category Loop */}
+          {/* Iterar sobre las categorías */}
           {categories.map(({ id, children }) => (
             <Box key={id} sx={{ bgcolor: "#11212D" }}>
-              {/* Category Title */}
-              <ListItem sx={itemCategory}>
+              {/* Título de la Categoría */}
+              <ListItem sx={itemCategoryStyle}>
                 <ListItemText sx={{ fontFamily: "Montserrat, sans-serif" }}>
                   {id}
                 </ListItemText>
@@ -211,7 +232,7 @@ export function Navigator(props) {
                   <ListItemButton
                     selected={location.pathname === route}
                     sx={{
-                      ...item,
+                      ...itemStyle,
                       bgcolor:
                         location.pathname === route
                           ? "rgba(255, 255, 255, 0.1)"
