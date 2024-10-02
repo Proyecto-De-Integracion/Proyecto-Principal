@@ -1,5 +1,6 @@
 import request from "../models/req.model.js";
 import color from "chalk";
+
 export const creatorRequest = async (req, res) => {
   try {
     const { description } = req.body;
