@@ -1,5 +1,4 @@
 import mongo from "mongoose";
-import z from "zod";
 
 const userModel = new mongo.Schema({
   usernames: { type: String, required: true, trim: true },
@@ -7,11 +6,10 @@ const userModel = new mongo.Schema({
   emails: { type: String, required: true, trim: true },
   profilePicture: {
     _id: { type: String, default: "imagenProyect/afpdiox30acmlfvcskww" },
-    url: {
-      type: String,
-      default: "https://res.cloudinary.com/ddwriwzgm/image/upload/v1727374339/imagenProyect/afpdiox30acmlfvcskww.jpg",
-    },
+    url: { type: String, default: "https://res.cloudinary.com/ddwriwzgm/image/upload/v1727374339/imagenProyect/afpdiox30acmlfvcskww.jpg" },
   },
+  isApproved: { type: Boolean, default: false },
+  isAuthorized: { type: Boolean, default: false },
 });
 
 export const user = mongo.model("User", userModel);
