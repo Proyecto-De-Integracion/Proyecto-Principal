@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 const apiKey = "AIzaSyDoU5qjzzHh-2rVgmvQjMiB8QSy9HCouUw"; // Reemplaza con tu API key de Google Maps
@@ -8,7 +8,6 @@ export const Map = ({ onMarkerChange }) => {
     lat: -26.1853,
     lng: -58.1735,
   });
-  const [address, setAddress] = useState("");
 
   const onLoad = useCallback((marker) => {
     marker.setDraggable(true);
@@ -31,13 +30,12 @@ export const Map = ({ onMarkerChange }) => {
       const data = await response.json();
       if (data.results && data.results.length > 0) {
         const address = data.results[0].formatted_address;
-        setAddress(address); // Guardar la dirección en el estado
+        console.log("Address:", address);
       } else {
-        setAddress("No address found.");
+        console.log("No address found.");
       }
     } catch (error) {
       console.error("Error fetching address:", error);
-      setAddress("Error fetching address.");
     }
   };
 
@@ -58,9 +56,6 @@ export const Map = ({ onMarkerChange }) => {
       <div style={{ marginTop: "10px" }}>
         <strong>Coordinates:</strong> Lat: {markerPosition.lat}, Lng:{" "}
         {markerPosition.lng}
-        <br />
-        <strong>Address:</strong>{" "}
-        {address ? address : "Drag the marker to get the address."}
       </div>
     </LoadScript>
   );
