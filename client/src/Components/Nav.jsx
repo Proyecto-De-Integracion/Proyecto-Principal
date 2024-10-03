@@ -22,6 +22,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { getSession, logoutUser, updateProfilePicture } from "../api/auth";
 import Swal from "sweetalert2";
+import logo from "../assets/logo.png";
 
 // Categorías del menú lateral
 const categories = [
@@ -153,11 +154,14 @@ export function Navigator(props) {
         }}
       >
         <List disablePadding>
-          {/* Título Principal */}
-          <ListItem sx={{ ...itemStyle, ...itemCategoryStyle, fontSize: 22 }}>
-            ViewsEvent
-          </ListItem>
-
+          {/* Logo */}
+          <Box sx={{ textAlign: "center", mb: 2 }}>
+            <img
+              src={logo} // Use the imported logo
+              alt="Logo"
+              style={{ width: "100px", height: "auto" }}
+            />
+          </Box>
           {/* Foto de perfil con input para cambiarla */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 1 }}>
             <Box
