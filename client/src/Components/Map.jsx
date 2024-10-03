@@ -18,13 +18,13 @@ const Map = ({ onMarkerChange }) => {
     lat: -26.1853,
     lng: -58.1735,
   });
+  const [address, setAddress] = useState("");
 
   const handleMarkerDragEnd = (e) => {
     const newPosition = e.target.getLatLng();
     setMarkerPosition(newPosition);
-    if (onMarkerChange) {
-      onMarkerChange(newPosition.lat, newPosition.lng);
-    }
+
+    // Fetch the new address based on lat/lng
     getAddressFromCoordinates(newPosition.lat, newPosition.lng);
   };
 
@@ -35,9 +35,15 @@ const Map = ({ onMarkerChange }) => {
       );
       const data = await response.json();
       if (data.display_name) {
+        setAddress(data.display_name); // Set the address
         console.log("Address:", data.display_name);
       } else {
         console.log("No address found.");
+      }
+
+      // Pass lat, lng, and address to the parent
+      if (onMarkerChange) {
+        onMarkerChange(lat, lng, data.display_name || "No address found");
       }
     } catch (error) {
       console.error("Error fetching address:", error);
@@ -48,10 +54,10 @@ const Map = ({ onMarkerChange }) => {
     <MapContainer
       center={markerPosition}
       zoom={14}
-      style={{ height: "400px", width: "100%" }} // Altura y ancho definidos
+      style={{ height: "400px", width: "100%" }} // Define height and width
     >
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" // Cambiado a OpenStreetMap
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       <Marker
@@ -62,7 +68,7 @@ const Map = ({ onMarkerChange }) => {
           dragend: handleMarkerDragEnd,
         }}
       >
-        <Popup>¡Estás aquí!</Popup>
+        <Popup>{address || "¡Estás aquí!"}</Popup>
       </Marker>
     </MapContainer>
   );
