@@ -35,22 +35,28 @@ export const login = async (req, res) => {
 
     const userSearched = await user.findOne({ emails: email });
 
-    if (!userSearched) res.status(401).json({ message: "Invalid email or password" });
+    if (!userSearched) return res.status(401).json({ message: "Invalid email" });
 
     const isValidPassword = await bcrypt.compare(password, userSearched.passwords);
 
-    if (!isValidPassword) res.status(401).json({ message: "Invalid email or password" });
+    if (!isValidPassword) return res.status(401).json({ message: "Invalid password" });
 
     const token = await generateJWT(userSearched._id);
 
     req.session.token = token;
 
-    res.cookie("authToken", token, { httpOnly: true, secure: IS_PRODUCTION, SameSite: IS_PRODUCTION ? "None" : "Lax", maxAge: 3600000, sameSite: "None" });
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: IS_PRODUCTION,
+      SameSite: IS_PRODUCTION ? "None" : "Lax",
+      maxAge: 3600000,
+      sameSite: "None",
+    });
 
-    res.status(200).json({ message: "Login successful" });
+    return res.status(200).json({ message: "Login successful" });
   } catch (error) {
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
-    console.log(color.red("                                        Error en el controlador de Accesos"));
+    console.log(color.red("                                Error en el controlador de Accesos"));
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
     console.error();
     console.error(error);
