@@ -11,9 +11,8 @@ export const deleteImageOfdataBase = async (pId, imageId) => {
 
       if (!publication) return { message: "the post does not exist" };
 
-      const result = await publication.updateOne({
-        $pull: { "medias.photos": { _id: imageId } },
-      });
+      const result = await publication.updateOne({ $pull: { "medias.photos": { _id: imageId } } });
+
       if (result.acknowledged === true && result.modifiedCount === 1) {
         await deleteImage(imageId);
 
@@ -27,7 +26,13 @@ export const deleteImageOfdataBase = async (pId, imageId) => {
       return { message: "The id entered is not valid" };
     }
   } catch (error) {
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("            Error en la utilidad de eliminación de imagen del las base de datos"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log();
     console.error(error);
+    console.log();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
   }
 };
 
@@ -55,6 +60,12 @@ export const deleteVideoOfdataBase = async (pId, videoId) => {
       return { message: "The id entered is not valid" };
     }
   } catch (error) {
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("            Error en la utilidad de eliminación de videos del las base de datos"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log();
     console.error(error);
+    console.log();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
   }
 };
