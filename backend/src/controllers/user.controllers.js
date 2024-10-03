@@ -10,13 +10,25 @@ export const register = async (req, res) => {
   try {
     const { username, password, email } = req.body;
 
+    const searchEmail = await user.find({ emails: email }).exec();
+
+    const isExistEmail = Boolean(searchEmail);
+
+    if (isExistEmail) return res.status(406).json({ message: "usuario ya existe con ese email" });
+
+    const searchUsername = await user.find({ usernames: username }).exec();
+
+    const isExistUsername = Boolean(searchUsername);
+
+    if (isExistUsername) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new user({ usernames: username, passwords: hashedPassword, emails: email });
 
     await newUser.save();
 
-    return res.status(201).json({ message: "User created successfully" });
+    return res.status(201).json({ message: "Usuario registrado con éxito" });
   } catch (error) {
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
     console.log(color.red("                           Error en el controlador de registros de usuarios"));
@@ -35,22 +47,28 @@ export const login = async (req, res) => {
 
     const userSearched = await user.findOne({ emails: email });
 
-    if (!userSearched) res.status(401).json({ message: "Invalid email or password" });
+    if (!userSearched) return res.status(401).json({ message: "Invalid email" });
 
     const isValidPassword = await bcrypt.compare(password, userSearched.passwords);
 
-    if (!isValidPassword) res.status(401).json({ message: "Invalid email or password" });
+    if (!isValidPassword) return res.status(401).json({ message: "Invalid password" });
 
     const token = await generateJWT(userSearched._id);
 
     req.session.token = token;
 
-    res.cookie("authToken", token, { httpOnly: true, secure: IS_PRODUCTION, SameSite: IS_PRODUCTION ? "None" : "Lax", maxAge: 3600000, sameSite: "None" });
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: IS_PRODUCTION,
+      SameSite: IS_PRODUCTION ? "None" : "Lax",
+      maxAge: 3600000,
+      sameSite: "None",
+    });
 
-    res.status(200).json({ message: "Login successful" });
+    return res.status(200).json({ message: "Login successful" });
   } catch (error) {
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
-    console.log(color.red("                                        Error en el controlador de Accesos"));
+    console.log(color.red("                                Error en el controlador de Accesos"));
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
     console.error();
     console.error(error);
@@ -102,6 +120,18 @@ export const profileUpdater = async (req, res) => {
     const { id } = req.user;
 
     const { email, username } = req.body;
+
+    const searchEmail = await user.find({ emails: email }).exec();
+
+    const isExistEmail = Boolean(searchEmail);
+
+    if (isExistEmail) return res.status(406).json({ message: "usuario ya existe con ese email" });
+
+    const searchUsername = await user.find({ usernames: username }).exec();
+
+    const isExistUsername = Boolean(searchUsername);
+
+    if (isExistUsername) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
 
     let updatedFields = { emails: email, usernames: username }; // Campos a actualizar
 
