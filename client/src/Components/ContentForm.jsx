@@ -63,7 +63,6 @@ export const Content2 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const eventData = new FormData();
     eventData.append("title", formData.title);
     eventData.append("description", formData.description);
