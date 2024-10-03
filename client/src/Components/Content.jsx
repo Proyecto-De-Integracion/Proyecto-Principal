@@ -10,13 +10,13 @@ import {
   Tab,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import dayjs from "dayjs";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { Map } from "./Map.jsx";
+import { fetchPublicationById } from "../api/publish.js"; // Asegúrate de que la ruta sea correcta
 
 export function Content() {
   const [activeTab, setActiveTab] = useState(0);
@@ -31,18 +31,22 @@ export function Content() {
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const response = await axios.get("");
-        const data = response.data;
+        // Supongamos que estás buscando por ID, puedes cambiar esto según sea necesario
+        const publicationId = "ID_DE_LA_PUBLICACION"; // Reemplaza esto con el ID real
+        const data = await fetchPublicationById(publicationId);
+
         setEventData({
-          title: data.title,
-          description: data.description,
-          dateStart: data.dateStart,
-          dateEnd: data.dateEnd,
-          location: data.location,
-          imageUrl: data.imageUrl || "https://via.placeholder.com/800x400",
+          title: data.titles,
+          description: data.descriptions,
+          dateStart: data.startDates,
+          dateEnd: data.endDates,
+          location: `${data.locations.lat}, ${data.locations.long}`,
+          imageUrl:
+            data.medias.photos[0]?.url || "https://via.placeholder.com/800x400", // Asegúrate de que existe al menos una foto
         });
       } catch (error) {
         console.error("Error fetching event data:", error);
@@ -51,6 +55,7 @@ export function Content() {
 
     fetchEventData();
   }, []);
+
   return (
     <Paper sx={{ maxWidth: 1300, margin: "", overflow: "hidden" }}>
       {/* AppBar with Tabs */}
