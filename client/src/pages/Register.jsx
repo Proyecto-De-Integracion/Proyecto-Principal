@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { registerUser } from "../api/auth";
+import { registerUser } from "../api/auth"; // Asegúrate de que esta función haga la solicitud correcta al backend
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import video from "../assets/video 1.mp4";
@@ -35,7 +35,10 @@ const Register = () => {
       setErrors(validationErrors);
     } else {
       const res = await registerUser({ username, email, password });
-      if (res.message === "User created successfully") {
+
+      // Verifica la respuesta del backend
+      if (res.message === "Usuario registrado con éxito") {
+        // Alerta con SweetAlert2
         Swal.fire({
           icon: "success",
           title: "Usuario creado con éxito",
@@ -47,6 +50,7 @@ const Register = () => {
           },
         });
       } else {
+        // Mostrar el error del backend
         setErrors({ submit: res.message });
       }
     }
