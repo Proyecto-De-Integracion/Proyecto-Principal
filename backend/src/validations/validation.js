@@ -12,8 +12,6 @@ export const registerValidations = [
 export const publicationsValidations = [
   body("title").notEmpty().withMessage("El título es obligatorio").isLength({ max: 100 }).withMessage("El título no puede tener más de 100 caracteres"),
   body("description").notEmpty().withMessage("La descripción es obligatoria").isLength({ max: 500 }).withMessage("La descripción no puede tener más de 500 caracteres"),
-  body("lat").notEmpty().withMessage("La latitud es obligatoria").isFloat({ min: -90, max: 90 }).withMessage("La latitud debe estar entre -90 y 90"),
-  body("long").notEmpty().withMessage("La longitud es obligatoria").isFloat({ min: -180, max: 180 }).withMessage("La longitud debe estar entre -180 y 180"),
   body("category").notEmpty().withMessage("La categoría es obligatoria").isIn(["Musical", "Cultural", "Académico", "Caritativo"]).withMessage("La categoría no es válida"),
   body("startDate").notEmpty().withMessage("La fecha de inicio es obligatoria").isISO8601().withMessage("La fecha de inicio debe ser una fecha válida"),
   body("endDate")
