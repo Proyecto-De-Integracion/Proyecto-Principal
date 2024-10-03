@@ -1,6 +1,6 @@
 import { deleteImageOfdataBase, deleteVideoOfdataBase } from "../utils/media.utils.js";
 
-export const deleteImageInCloudinary = async (req, res) => {
+export const deleteImage = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -20,7 +20,7 @@ export const deleteImageInCloudinary = async (req, res) => {
   }
 };
 
-export const deleteVideoInCloudinary = async (req, res) => {
+export const deleteVideo = async (req, res) => {
   try {
     const { id } = req.params;
 
