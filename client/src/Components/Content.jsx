@@ -10,134 +10,181 @@ import {
   Tab,
   Typography,
 } from "@mui/material";
-import dayjs from "dayjs";
-import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
+import { styled } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import { Map } from "./Map.jsx";
-import { fetchPublicationById } from "../api/publish.js"; // Asegúrate de que la ruta sea correcta
+import { PickersDay } from "@mui/x-date-pickers/PickersDay";
+import dayjs from "dayjs";
+import isBetweenPlugin from "dayjs/plugin/isBetween";
+import { fetchAllPublications } from "../api/publish.js";
+
+dayjs.extend(isBetweenPlugin);
+
+// Custom style for the PickersDay
+const CustomPickersDay = styled(PickersDay, {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isHovered",
+})(({ theme, isSelected, isHovered, day }) => ({
+  borderRadius: 0,
+  ...(isSelected && {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    "&:hover, &:focus": {
+      backgroundColor: theme.palette.primary.main,
+    },
+  }),
+  ...(isHovered && {
+    backgroundColor: theme.palette.primary.light,
+    "&:hover, &:focus": {
+      backgroundColor: theme.palette.primary.light,
+    },
+  }),
+  ...(day.day() === 0 && {
+    borderTopLeftRadius: "50%",
+    borderBottomLeftRadius: "50%",
+  }),
+  ...(day.day() === 6 && {
+    borderTopRightRadius: "50%",
+    borderBottomRightRadius: "50%",
+  }),
+}));
+
+const isInRange = (day, start, end) => {
+  return day.isBetween(start, end, "day", "[]");
+};
+
+function Day(props) {
+  const { day, startDate, endDate, hoveredDay, ...other } = props;
+  const isSelected = isInRange(day, startDate, endDate);
+  const isHovered = isInRange(day, hoveredDay, endDate);
+
+  return (
+    <CustomPickersDay
+      {...other}
+      day={day}
+      sx={{ px: 2.5 }}
+      disableMargin
+      isSelected={isSelected}
+      isHovered={isHovered}
+    />
+  );
+}
 
 export function Content() {
   const [activeTab, setActiveTab] = useState(0);
-  const [eventData, setEventData] = useState({
-    title: "",
-    description: "",
-    dateStart: "",
-    dateEnd: "",
-    location: "",
-    imageUrl: "",
-  });
+  const [eventsData, setEventsData] = useState([]);
+  const [hoveredDay, setHoveredDay] = useState(null);
+  const [selectedDates, setSelectedDates] = useState(null); // Stores start and end dates of selected event
+
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
   useEffect(() => {
-    const fetchEventData = async () => {
+    const fetchEvents = async () => {
       try {
-        // Supongamos que estás buscando por ID, puedes cambiar esto según sea necesario
-        const publicationId = "ID_DE_LA_PUBLICACION"; // Reemplaza esto con el ID real
-        const data = await fetchPublicationById(publicationId);
-
-        setEventData({
-          title: data.titles,
-          description: data.descriptions,
-          dateStart: data.startDates,
-          dateEnd: data.endDates,
-          location: `${data.locations.lat}, ${data.locations.long}`,
-          imageUrl:
-            data.medias.photos[0]?.url || "https://via.placeholder.com/800x400", // Asegúrate de que existe al menos una foto
-        });
+        const data = await fetchAllPublications();
+        setEventsData(data);
       } catch (error) {
-        console.error("Error fetching event data:", error);
+        console.error("Error fetching events:", error);
       }
     };
 
-    fetchEventData();
+    fetchEvents();
   }, []);
 
   return (
     <Paper sx={{ maxWidth: 1300, margin: "", overflow: "hidden" }}>
-      {/* AppBar with Tabs */}
+      {/* AppBar with Title */}
       <AppBar
         position="static"
         color="default"
         elevation={0}
         sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
       >
-        <Tabs value={activeTab} onChange={handleTabChange} textColor="inherit">
-          <Tab label="Acerca" />
-          <Tab label="Mapa" />
-        </Tabs>
+        <Typography variant="h6" sx={{ p: 2 }}>
+          Eventos
+        </Typography>
       </AppBar>
 
       {/* Main Grid Container */}
       <Grid container spacing={2} sx={{ p: 3 }}>
-        {activeTab === 0 && (
-          <>
-            <Grid
-              item
-              xs={12}
-              container
-              justifyContent="center"
-              alignItems="center"
-            >
-              {/* Placeholder for Photo */}
-              <Card sx={{ maxHeight: 400 }}>
-                <CardMedia
-                  component="img"
-                  height="400"
-                  image={eventData.imageUrl}
-                  alt="Event placeholder"
-                />
-              </Card>
-            </Grid>
+        {eventsData.length === 0 ? (
+          <Typography variant="h6" sx={{ p: 3 }}>
+            No hay eventos disponibles en este momento.
+          </Typography>
+        ) : (
+          eventsData.map((event, index) => {
+            const startDate = dayjs(event.startDates);
+            const endDate = dayjs(event.endDates);
 
-            {/* Display Event Information */}
-            <Grid item xs={12}>
-              <CardContent>
-                <Typography variant="h5" gutterBottom>
-                  {eventData.title || "Título del Evento"}
-                </Typography>
+            return (
+              <Grid container spacing={2} key={index}>
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  {/* Display Event Image */}
+                  <Card sx={{ maxHeight: 400 }}>
+                    <CardMedia
+                      component="img"
+                      height="400"
+                      image={
+                        event.medias?.photos[0]?.url ||
+                        "https://via.placeholder.com/800x400"
+                      }
+                      alt="Event placeholder"
+                    />
+                  </Card>
+                </Grid>
 
-                <Typography variant="body1" gutterBottom>
-                  <strong>Descripción:</strong>{" "}
-                  {eventData.description ||
-                    "Descripción del evento no disponible."}
-                </Typography>
+                {/* Display Event Information */}
+                <Grid item xs={12}>
+                  <CardContent>
+                    <Typography variant="h5" gutterBottom>
+                      {event.titles || "Título del Evento"}
+                    </Typography>
 
-                <Typography variant="body1" gutterBottom>
-                  <strong>Fecha de Inicio:</strong>{" "}
-                  {eventData.dateStart || "Fecha de inicio no disponible"}
-                </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      <strong>Descripción:</strong>{" "}
+                      {event.descriptions ||
+                        "Descripción del evento no disponible."}
+                    </Typography>
 
-                <Typography variant="body1" gutterBottom>
-                  <strong>Fecha de Fin:</strong>{" "}
-                  {eventData.dateEnd || "Fecha de fin no disponible"}
-                </Typography>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["DateCalendar", "DateCalendar"]}>
-                    <DemoItem>
+                    {/* Calendar displaying the event dates */}
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DateCalendar
-                        defaultValue={dayjs("27/9/2024")}
-                        disabled
+                        value={selectedDates || startDate}
+                        onChange={() => {}}
+                        showDaysOutsideCurrentMonth
+                        displayWeekNumber
+                        slots={{ day: Day }}
+                        slotProps={{
+                          day: {
+                            startDate,
+                            endDate,
+                            hoveredDay,
+                            onPointerEnter: () => setHoveredDay(startDate),
+                            onPointerLeave: () => setHoveredDay(null),
+                          },
+                        }}
                       />
-                    </DemoItem>
-                  </DemoContainer>
-                </LocalizationProvider>
-                <Typography variant="body1" gutterBottom>
-                  <strong>Ubicación:</strong>{" "}
-                  {eventData.location || "Ubicación no disponible"}
-                </Typography>
-              </CardContent>
-            </Grid>
-          </>
-        )}
+                    </LocalizationProvider>
 
-        {activeTab === 1 && (
-          <Grid item xs={12}>
-            <Map />
-          </Grid>
+                    <Typography variant="body1" gutterBottom>
+                      <strong>Ubicación:</strong>{" "}
+                      {event.locations?.lat && event.locations?.long
+                        ? `${event.locations.lat}, ${event.locations.long}`
+                        : "Ubicación no disponible"}
+                    </Typography>
+                  </CardContent>
+                </Grid>
+              </Grid>
+            );
+          })
         )}
       </Grid>
     </Paper>

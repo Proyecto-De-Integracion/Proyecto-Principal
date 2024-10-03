@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   AppBar,
   Box,
@@ -32,6 +32,7 @@ export const Content2 = () => {
   };
 
   const handleMarkerChange = (newLat, newLng) => {
+    console.log("New Lat:", newLat, "New Lng:", newLng);
     setLat(newLat);
     setLng(newLng);
 
@@ -58,23 +59,33 @@ export const Content2 = () => {
     }
   };
 
+  // Memoizing the submission data
+  const submissionData = useMemo(() => {
+    return {
+      title: formData.title,
+      description: formData.description,
+      location: JSON.stringify({ lat: formData.lat, long: formData.long }),
+      category: formData.category,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      media: formData.media,
+    };
+  }, [formData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const eventData = new FormData();
-    eventData.append("title", formData.title);
-    eventData.append("description", formData.description);
-    eventData.append(
-      "location",
-      JSON.stringify({ lat: formData.lat, long: formData.long })
-    );
-    eventData.append("category", formData.category);
-    eventData.append("startDate", formData.startDate);
-    eventData.append("endDate", formData.endDate);
+    eventData.append("title", submissionData.title);
+    eventData.append("description", submissionData.description);
+    eventData.append("location", submissionData.location);
+    eventData.append("category", submissionData.category);
+    eventData.append("startDate", submissionData.startDate);
+    eventData.append("endDate", submissionData.endDate);
 
-    if (formData.media) {
-      for (let i = 0; i < formData.media.length; i++) {
-        eventData.append("media", formData.media[i]);
+    if (submissionData.media) {
+      for (let i = 0; i < submissionData.media.length; i++) {
+        eventData.append("media", submissionData.media[i]);
       }
     }
 
@@ -162,8 +173,7 @@ export const Content2 = () => {
                 variant="outlined"
                 fullWidth
                 name="lat"
-                value={formData.lat || lat}
-                onChange={handleChange}
+                value={formData.lat} // Use the state from marker
                 InputProps={{ readOnly: true }} // ReadOnly as it is updated by map interaction
               />
 
@@ -173,8 +183,7 @@ export const Content2 = () => {
                 variant="outlined"
                 fullWidth
                 name="long"
-                value={formData.long || lng}
-                onChange={handleChange}
+                value={formData.long} // Use the state from marker
                 InputProps={{ readOnly: true }} // ReadOnly as it is updated by map interaction
               />
 
