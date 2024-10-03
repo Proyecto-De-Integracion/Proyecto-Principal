@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import {
   AppBar,
   Box,
@@ -10,21 +10,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Map from "./Map"; // Assuming you have a Map component
+import Map from "../Components/Map.jsx"; // Asegúrate de que tienes este componente
 
 export const Content2 = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [lat, setLat] = useState(""); // State for latitude
-  const [lng, setLng] = useState(""); // State for longitude
+  const [lat, setLat] = useState(""); // Estado para latitud
+  const [lng, setLng] = useState(""); // Estado para longitud
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    lat: "", // Latitude for location
-    long: "", // Longitude for location
-    category: "", // Event category
-    startDate: "", // Event start date
-    endDate: "", // Event end date
-    media: null, // Media files (image/video)
+    lat: "", // Latitud para ubicación
+    long: "", // Longitud para ubicación
+    category: "", // Categoría del evento
+    startDate: "", // Fecha de inicio del evento
+    endDate: "", // Fecha de fin del evento
+    media: null, // Archivos multimedia (imagen/video)
   });
 
   const handleTabChange = (event, newValue) => {
@@ -32,10 +32,12 @@ export const Content2 = () => {
   };
 
   const handleMarkerChange = (newLat, newLng) => {
-    console.log("New Lat:", newLat, "New Lng:", newLng);
+    // Actualiza el estado de latitud y longitud
+    console.log(newLat, newLng);
     setLat(newLat);
     setLng(newLng);
 
+    // Actualiza los valores de latitud y longitud en formData
     setFormData((prevFormData) => ({
       ...prevFormData,
       lat: newLat,
@@ -59,33 +61,23 @@ export const Content2 = () => {
     }
   };
 
-  // Memoizing the submission data
-  const submissionData = useMemo(() => {
-    return {
-      title: formData.title,
-      description: formData.description,
-      location: JSON.stringify({ lat: formData.lat, long: formData.long }),
-      category: formData.category,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      media: formData.media,
-    };
-  }, [formData]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const eventData = new FormData();
-    eventData.append("title", submissionData.title);
-    eventData.append("description", submissionData.description);
-    eventData.append("location", submissionData.location);
-    eventData.append("category", submissionData.category);
-    eventData.append("startDate", submissionData.startDate);
-    eventData.append("endDate", submissionData.endDate);
+    eventData.append("title", formData.title);
+    eventData.append("description", formData.description);
+    eventData.append(
+      "location",
+      JSON.stringify({ lat: formData.lat, long: formData.long })
+    );
+    eventData.append("category", formData.category);
+    eventData.append("startDate", formData.startDate);
+    eventData.append("endDate", formData.endDate);
 
-    if (submissionData.media) {
-      for (let i = 0; i < submissionData.media.length; i++) {
-        eventData.append("media", submissionData.media[i]);
+    if (formData.media) {
+      for (let i = 0; i < formData.media.length; i++) {
+        eventData.append("media", formData.media[i]);
       }
     }
 
@@ -111,7 +103,7 @@ export const Content2 = () => {
   };
 
   return (
-    <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
+    <Paper sx={{ maxWidth: 1200, margin: "auto", overflow: "hidden" }}>
       <AppBar
         position="static"
         color="default"
@@ -125,119 +117,125 @@ export const Content2 = () => {
 
       <Grid container spacing={2} sx={{ p: 3 }}>
         {activeTab === 0 && (
-          <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>
-              Create New Publication
-            </Typography>
+          <>
+            {/* Formulario a la izquierda */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" gutterBottom>
+                Create New Publication
+              </Typography>
 
-            <Box
-              component="form"
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-              }}
-              onSubmit={handleSubmit}
-            >
-              <TextField
-                required
-                label="Title"
-                variant="outlined"
-                fullWidth
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-              />
+              <Box
+                component="form"
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+                onSubmit={handleSubmit}
+              >
+                <TextField
+                  required
+                  label="Title"
+                  variant="outlined"
+                  fullWidth
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                />
 
-              <TextField
-                required
-                label="Description"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-              />
+                <TextField
+                  required
+                  label="Description"
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                />
 
-              {/* Map Component */}
-              <Box sx={{ height: 250, mt: 2 }}>
+                <TextField
+                  required
+                  label="Latitude"
+                  variant="outlined"
+                  fullWidth
+                  name="lat"
+                  value={lat} // Este valor se actualiza con el marcador del mapa
+                  onChange={handleChange}
+                  InputProps={{ readOnly: true }} // Solo lectura, actualizado por el mapa
+                />
+
+                <TextField
+                  required
+                  label="Longitude"
+                  variant="outlined"
+                  fullWidth
+                  name="long"
+                  value={lng} // Este valor se actualiza con el marcador del mapa
+                  onChange={handleChange}
+                  InputProps={{ readOnly: true }} // Solo lectura, actualizado por el mapa
+                />
+
+                <TextField
+                  required
+                  label="Category"
+                  variant="outlined"
+                  fullWidth
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                />
+
+                <TextField
+                  required
+                  label="Start Date"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleChange}
+                />
+
+                <TextField
+                  required
+                  label="End Date"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  name="endDate"
+                  value={formData.endDate}
+                  onChange={handleChange}
+                />
+
+                {/* Media Input */}
+                <input
+                  type="file"
+                  name="media"
+                  multiple
+                  accept="image/,video/"
+                  onChange={handleChange}
+                />
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Grid>
+
+            {/* Mapa a la derecha */}
+            <Grid item xs={12} md={6}>
+              <Box sx={{ height: 500 }}>
                 <Map onMarkerChange={handleMarkerChange} />
               </Box>
-
-              {/* Address and Coordinates */}
-              <TextField
-                required
-                label="Latitude"
-                variant="outlined"
-                fullWidth
-                name="lat"
-                value={formData.lat} // Use the state from marker
-                InputProps={{ readOnly: true }} // ReadOnly as it is updated by map interaction
-              />
-
-              <TextField
-                required
-                label="Longitude"
-                variant="outlined"
-                fullWidth
-                name="long"
-                value={formData.long} // Use the state from marker
-                InputProps={{ readOnly: true }} // ReadOnly as it is updated by map interaction
-              />
-
-              <TextField
-                required
-                label="Category"
-                variant="outlined"
-                fullWidth
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-              />
-
-              <TextField
-                required
-                label="Start Date"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-              />
-
-              <TextField
-                required
-                label="End Date"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-                name="endDate"
-                value={formData.endDate}
-                onChange={handleChange}
-              />
-
-              {/* Media Input */}
-              <input
-                type="file"
-                name="media"
-                multiple
-                accept="image/*,video/*"
-                onChange={handleChange}
-              />
-
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
-              >
-                Submit
-              </Button>
-            </Box>
-          </Grid>
+            </Grid>
+          </>
         )}
       </Grid>
     </Paper>

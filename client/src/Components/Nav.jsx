@@ -154,8 +154,14 @@ export function Navigator(props) {
         }}
       >
         <List disablePadding>
-          {/* Logo */}
-          <Box sx={{ textAlign: "center", mb: 2 }}>
+          <Box
+            sx={{
+              display: "flex", // Use flexbox for centering
+              justifyContent: "center", // Center horizontally
+              alignItems: "center", // Center vertically (if needed)
+              mb: 2,
+            }}
+          >
             <img
               src={logo} // Use the imported logo
               alt="Logo"
