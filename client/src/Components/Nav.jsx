@@ -19,10 +19,10 @@ import TimerIcon from "@mui/icons-material/Timer";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
-import { getSession, logoutUser, updateProfilePicture } from "../api/auth";
+import { useEffect, useState } from "react";
+import { getSession, logoutUser } from "../api/auth";
 import Swal from "sweetalert2";
-import logo from "../assets/logo.png";
+import logo from "../assets/LOGO 2024.png";
 
 // Categorías del menú lateral
 const categories = [
@@ -45,19 +45,20 @@ const categories = [
 
 // Estilos para los elementos del menú
 const itemStyle = {
-  py: 2,
-  px: 3,
+  py: 1.5, // Sección más pequeña
+  px: 2,
   color: "rgba(255, 255, 255, 0.8)",
-  transition: "background 0.3s ease",
+  transition: "background 0.3s ease, transform 0.3s ease", // Añadido transform para el hover
   "&:hover, &:focus": {
     bgcolor: "rgba(255, 255, 255, 0.1)",
+    transform: "scale(1.05)", // Aumentar el tamaño al hacer hover
   },
 };
 
 const itemCategoryStyle = {
-  fontSize: "1rem",
-  py: 2,
-  px: 3,
+  fontSize: "0.9rem", // Sección más pequeña
+  py: 1,
+  px: 2,
   textTransform: "uppercase",
   fontWeight: "bold",
   color: "#fff",
@@ -71,7 +72,6 @@ export function Navigator(props) {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
-  const fileInputRef = useRef(null); // Referencia para el input de archivo
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -83,35 +83,6 @@ export function Navigator(props) {
     };
     fetchSession();
   }, []);
-
-  const handleProfilePictureChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("media", file); // Cambio de 'profilePicture' a 'media' según el backend
-
-      try {
-        const res = await updateProfilePicture(formData);
-        if (res.message === "perfil actualizado con éxito") {
-          setProfilePicture(res.profilePicture.url); // Ajuste para actualizar el URL de la imagen
-          Swal.fire("Éxito", "Foto de perfil actualizada con éxito", "success");
-        } else {
-          Swal.fire(
-            "Error",
-            "No se pudo actualizar la foto de perfil",
-            "error"
-          );
-        }
-      } catch (error) {
-        console.error(error);
-        Swal.fire(
-          "Error",
-          "Hubo un problema al actualizar la foto de perfil",
-          "error"
-        );
-      }
-    }
-  };
 
   const handleLogout = async () => {
     try {
@@ -156,67 +127,25 @@ export function Navigator(props) {
         <List disablePadding>
           <Box
             sx={{
-              display: "flex", // Use flexbox for centering
-              justifyContent: "center", // Center horizontally
-              alignItems: "center", // Center vertically (if needed)
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
               mb: 2,
             }}
           >
             <img
-              src={logo} // Use the imported logo
+              src={logo}
               alt="Logo"
-              style={{ width: "100px", height: "auto" }}
+              style={{ width: "150px", height: "auto" }} // Aumentado el tamaño del logo
             />
           </Box>
-          {/* Foto de perfil con input para cambiarla */}
+          {/* Foto de perfil sin input para cambiarla */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 1 }}>
-            <Box
-              sx={{
-                position: "relative",
-                display: "inline-block",
-                cursor: "pointer",
-              }}
-              onClick={() => fileInputRef.current.click()} // Abre el input de archivo al hacer clic en el avatar
-            >
-              <Avatar src={profilePicture} sx={{ width: 80, height: 80 }} />
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  borderRadius: "50%",
-                  bgcolor: "rgba(255, 255, 255, 0.2)",
-                  opacity: 0,
-                  transition: "opacity 0.3s ease",
-                  "&:hover": {
-                    opacity: 1,
-                  },
-                }}
-              />
-            </Box>
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleProfilePictureChange}
-              style={{ display: "none" }} // Ocultar el input
-            />
+            <Avatar src={profilePicture} sx={{ width: 80, height: 80 }} />
           </Box>
 
-          {/* Nombre del usuario con recuadro estético */}
-          <Box
-            sx={{
-              textAlign: "center",
-              bgcolor: "#11212D",
-              borderRadius: "8px",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              p: 1,
-              mx: 2,
-              mb: 2,
-            }}
-          >
+          {/* Nombre del usuario sin recuadro */}
+          <Box sx={{ textAlign: "center", mb: 2 }}>
             <Typography
               variant="h6"
               sx={{

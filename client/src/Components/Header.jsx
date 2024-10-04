@@ -17,6 +17,7 @@ import {
 import Grid2 from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { getSession } from "../api/auth";
+import logo from "../assets/LOGO 2024.png"; // Importa el logo
 
 const headerBgColor = "#11212D";
 const lightColor = "rgba(255, 255, 255, 0.7)";
@@ -57,10 +58,10 @@ export function Header(props) {
             </IconButton>
           </Grid2>
 
+          {/* Sección del logo */}
           <Grid2 sx={{ flexGrow: 1, textAlign: "center" }}>
-            <Typography variant="h5" component="h1" color="inherit">
-              ViewsEvent
-            </Typography>
+            <img src={logo} alt="Logo" style={{ width: "150px" }} />{" "}
+            {/* Añade el logo aquí */}
           </Grid2>
 
           <Grid2

@@ -1,20 +1,18 @@
 import { useState, useEffect } from "react";
 import {
-  AppBar,
   Card,
   CardMedia,
   CardContent,
   Paper,
   Grid,
-  Tabs,
-  Tab,
   Typography,
+  Avatar,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import { PickersDay } from "@mui/x-date-pickers/PickersDay";
+import { PickersDay } from "@mui/x-date-pickers/PickersDay"; // Verifica que esta línea sea correcta
 import dayjs from "dayjs";
 import isBetweenPlugin from "dayjs/plugin/isBetween";
 import { fetchAllPublications } from "../api/publish.js";
@@ -71,14 +69,9 @@ function Day(props) {
 }
 
 export function Content() {
-  const [activeTab, setActiveTab] = useState(0);
   const [eventsData, setEventsData] = useState([]);
   const [hoveredDay, setHoveredDay] = useState(null);
   const [selectedDates, setSelectedDates] = useState(null); // Stores start and end dates of selected event
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -94,21 +87,17 @@ export function Content() {
   }, []);
 
   return (
-    <Paper sx={{ maxWidth: 1300, margin: "", overflow: "hidden" }}>
-      {/* AppBar with Title */}
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
-      >
-        <Typography variant="h6" sx={{ p: 2 }}>
-          Eventos
-        </Typography>
-      </AppBar>
-
+    <Paper
+      sx={{
+        maxWidth: 1300,
+        margin: "auto",
+        overflow: "hidden",
+        backgroundColor: "transparent", // Cambia el fondo a transparente
+        padding: 3, // Espaciado alrededor del contenido
+      }}
+    >
       {/* Main Grid Container */}
-      <Grid container spacing={2} sx={{ p: 3 }}>
+      <Grid container spacing={2} justifyContent="center">
         {eventsData.length === 0 ? (
           <Typography variant="h6" sx={{ p: 3 }}>
             No hay eventos disponibles en este momento.
@@ -119,41 +108,67 @@ export function Content() {
             const endDate = dayjs(event.endDates);
 
             return (
-              <Grid container spacing={2} key={index}>
-                <Grid
-                  item
-                  xs={12}
-                  container
-                  justifyContent="center"
-                  alignItems="center"
+              <Grid
+                item
+                xs={12}
+                key={index}
+                display="flex"
+                justifyContent="center"
+              >
+                {/* Display Event Card */}
+                <Card
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    flexDirection: "row", // Alinea la foto y el calendario en una fila
+                    padding: 2,
+                    width: 800, // Aumenta el ancho de la publicación
+                    height: "auto", // Alto automático
+                  }}
                 >
-                  {/* Display Event Image */}
-                  <Card sx={{ maxHeight: 400 }}>
-                    <CardMedia
-                      component="img"
-                      height="400"
-                      image={
-                        event.medias?.photos[0]?.url ||
-                        "https://via.placeholder.com/800x400"
+                  {/* User's profile photo and name */}
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                      width: "30%",
+                    }}
+                  >
+                    <Avatar
+                      alt="User Profile"
+                      src={
+                        event.userProfilePhoto ||
+                        "https://via.placeholder.com/40"
                       }
-                      alt="Event placeholder"
+                      sx={{ mr: 1 }}
                     />
-                  </Card>
-                </Grid>
-
-                {/* Display Event Information */}
-                <Grid item xs={12}>
-                  <CardContent>
-                    <Typography variant="h5" gutterBottom>
-                      {event.titles || "Título del Evento"}
+                    <Typography variant="subtitle1">
+                      {event.userName || "Nombre del Usuario"}
                     </Typography>
+                  </CardContent>
 
-                    <Typography variant="body1" gutterBottom>
-                      <strong>Descripción:</strong>{" "}
-                      {event.descriptions ||
-                        "Descripción del evento no disponible."}
-                    </Typography>
+                  {/* Display Event Image */}
+                  <CardMedia
+                    component="img"
+                    height="140" // Ajuste de altura de la imagen
+                    image={
+                      event.medias?.photos[0]?.url ||
+                      "https://via.placeholder.com/800x400"
+                    }
+                    alt="Event placeholder"
+                    sx={{ objectFit: "cover", maxHeight: 200, width: "40%" }} // Ajusta la imagen para cubrir el área
+                  />
 
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "flex-start",
+                      width: "30%",
+                    }}
+                  >
                     {/* Calendar displaying the event dates */}
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DateCalendar
@@ -174,14 +189,22 @@ export function Content() {
                       />
                     </LocalizationProvider>
 
-                    <Typography variant="body1" gutterBottom>
+                    {/* Display Map */}
+                    <Typography variant="body2" sx={{ mt: 2 }}>
                       <strong>Ubicación:</strong>{" "}
                       {event.locations?.lat && event.locations?.long
                         ? `${event.locations.lat}, ${event.locations.long}`
                         : "Ubicación no disponible"}
                     </Typography>
+
+                    {/* Display Event Description */}
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      <strong>Descripción:</strong>{" "}
+                      {event.descriptions ||
+                        "Descripción del evento no disponible."}
+                    </Typography>
                   </CardContent>
-                </Grid>
+                </Card>
               </Grid>
             );
           })
