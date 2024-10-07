@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import PublishPage from "./pages/PublishPage";
 import PrivateRoute from "./router/PrivateRoute";
 import PublicRoute from "./router/PublicRoute";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -25,8 +26,15 @@ const App = () => {
               <PublishPage />
             </PrivateRoute>
           }
-        />{" "}
-        <Route path="/profile" element={"perfil"} />
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/login"
           element={
