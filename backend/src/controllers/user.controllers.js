@@ -10,13 +10,13 @@ export const register = async (req, res) => {
   try {
     const { username, password, email } = req.body;
 
-    const searchEmail = await user.find({ emails: email }).exec();
-
-    if (!searchEmail.length === 0) return res.status(406).json({ message: "usuario ya existe con ese email" });
-
     const searchUsername = await user.find({ usernames: username }).exec();
 
-    if (!searchUsername.length === 0) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
+    if (!searchUsername.length == 0) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
+
+    const searchEmail = await user.find({ emails: email }).exec();
+
+    if (!searchEmail.length == 0) return res.status(406).json({ message: "usuario ya existe con ese email" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -117,13 +117,13 @@ export const profileUpdater = async (req, res) => {
 
     const { email, username } = req.body;
 
-    const searchEmail = await user.find({ emails: email }).exec();
-
-    if (!searchEmail.length === 0) return res.status(406).json({ message: "usuario ya existe con ese email" });
-
     const searchUsername = await user.find({ usernames: username }).exec();
 
-    if (!searchUsername === 0) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
+    if (!searchUsername == 0) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
+
+    const searchEmail = await user.find({ emails: email }).exec();
+
+    if (!searchEmail.length == 0) return res.status(406).json({ message: "usuario ya existe con ese email" });
 
     let updatedFields = { emails: email, usernames: username }; // Campos a actualizar
 
