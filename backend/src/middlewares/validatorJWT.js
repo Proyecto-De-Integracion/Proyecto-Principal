@@ -5,21 +5,34 @@ import color from "chalk";
 
 export default async (req, res, next) => {
   try {
+    console.log(color.blue("----------------------------------------------Session-----------------------------------------------"));
+    console.log(req.session);
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.blue("----------------------------------------------Cookies-----------------------------------------------"));
+    console.log(req.cookies);
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log();
+
     const token = req.cookies.authToken || req.session.token;
 
     if (!token) return res.status(403).json({ message: "You do not have the authorization" });
 
     const decoded = jwt.verify(token, SECRET_KEY);
+
     const userSearched = await user.findById(decoded.id);
-    if (!userSearched) {
-      return res.status(401).json({ message: "Your authorization has already expired" });
-    }
+
+    if (!userSearched) return res.status(401).json({ message: "Your authorization has already expired" });
 
     req.user = userSearched;
+
     next();
   } catch (error) {
-    console.error(color.red("Error al verificar el token"));
-    console.error(error);
-    return res.status(401).json({ message: "Invalid token" });
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("                                Error al verificar el token"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log();
+    console.log(error);
+    console.log();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
   }
 };

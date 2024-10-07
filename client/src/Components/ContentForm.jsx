@@ -11,11 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import Map from "../Components/Map.jsx"; // Asegúrate de que tienes este componente
-import Swal from "sweetalert2"; // Importa SweetAlert2
-import { useNavigate } from "react-router-dom"; // Importa useNavigate para la redirección
 
 export const Content2 = () => {
-  const navigate = useNavigate(); // Inicializa useNavigate
   const [activeTab, setActiveTab] = useState(0);
   const [lat, setLat] = useState(""); // Estado para latitud
   const [lng, setLng] = useState(""); // Estado para longitud
@@ -96,35 +93,11 @@ export const Content2 = () => {
 
       if (response.ok) {
         console.log("Publication created successfully:", result);
-        // Muestra la alerta de éxito
-        Swal.fire({
-          title: "¡Éxito!",
-          text: "Tu publicación se publicó correctamente.",
-          icon: "success",
-          confirmButtonText: "Ver publicaciones",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Redirige a la página de publicaciones
-            navigate("/home");
-          }
-        });
       } else {
         console.error("Error creating publication:", result);
-        Swal.fire({
-          title: "Error",
-          text: "No se pudo crear la publicación. Intenta de nuevo.",
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
       }
     } catch (error) {
       console.error("Error submitting event:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Ocurrió un error al enviar la publicación.",
-        icon: "error",
-        confirmButtonText: "Aceptar",
-      });
     }
   };
 
