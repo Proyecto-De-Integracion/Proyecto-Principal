@@ -12,11 +12,11 @@ export const register = async (req, res) => {
 
     const searchEmail = await user.find({ emails: email }).exec();
 
-    if (!searchEmail.length === 0) return res.status(406).json({ message: "usuario ya existe con ese email" });
+    if (!searchEmail.length == 0) return res.status(406).json({ message: "usuario ya existe con ese email" });
 
     const searchUsername = await user.find({ usernames: username }).exec();
 
-    if (!searchUsername.length === 0) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
+    if (!searchUsername.length == 0) return res.status(406).json({ message: "usuario ya existe con ese nombre de usuario " });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
