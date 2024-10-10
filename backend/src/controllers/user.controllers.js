@@ -158,3 +158,13 @@ export const profileUpdater = async (req, res) => {
     return res.status(500).json({ message: "Error inesperado por favor intente mas tarde" });
   }
 };
+
+export const getProfiles = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const searchUser = await user.findById(id).populate("Publications");
+    console.log(searchUser);
+  } catch (error) {
+    console.log(error);
+  }
+};

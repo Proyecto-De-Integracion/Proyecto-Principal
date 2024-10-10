@@ -5,6 +5,7 @@ import { multimediaFormat, singlMediaFormat } from "../utils/savePublications.js
 import fs from "fs-extra";
 import { deleteImage, deleteVideo } from "../helpers/cloudinary.js";
 import color from "chalk";
+import { user } from "../models/user.model.js";
 
 export const publicationGetter = async (req, res) => {
   try {
@@ -98,6 +99,8 @@ export const postCreator = async (req, res) => {
         newPublications.medias.photos.push(...photo);
 
         newPublications.medias.videos.push(...video);
+
+        await user.findByIdAndUpdate(idUser, { $push: { publications: newPublications._id } });
 
         await newPublications.save();
 

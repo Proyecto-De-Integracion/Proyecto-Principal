@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+mongoose.set("strictPopulate", false);
 const reqModel = new mongoose.Schema({
   user: { type: String, require: true },
   email: { type: String, require: true },

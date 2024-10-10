@@ -7,7 +7,6 @@ const database = async () => {
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
     console.log(color.magenta("                              database connected successfully"));
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
-
     return mongo.connection;
   } catch (error) {
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
