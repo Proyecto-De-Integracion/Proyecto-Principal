@@ -145,7 +145,6 @@ export const profileUpdater = async (req, res) => {
 
     if (!userUpdated) return res.status(404).json({ message: "no se pudo realizar la actualización de su usuario " });
 
-    // Devuelve el usuario actualizado, incluyendo profilePicture
     return res.status(200).json({ message: "perfil actualizado con éxito", profilePicture: userUpdated.profilePicture });
   } catch (error) {
     console.log(color.blue("----------------------------------------------------------------------------------------------------"));
@@ -162,9 +161,16 @@ export const profileUpdater = async (req, res) => {
 export const getProfiles = async (req, res) => {
   try {
     const { id } = req.user;
-    const searchUser = await user.findById(id).populate("Publications");
-    console.log(searchUser);
+    const searchUser = await user.findById(id).populate({ path: "publications" });
+    return res.status(200).json(searchUser);
   } catch (error) {
-    console.log(error);
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log(color.red("                   Error en el controlador de traer perfiles  de usuario"));
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    console.log();
+    console.error(error);
+    console.log();
+    console.log(color.blue("----------------------------------------------------------------------------------------------------"));
+    return res.status(500).json({ message: "Error inesperado por favor intente mas tarde" });
   }
 };
