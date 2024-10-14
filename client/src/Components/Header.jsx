@@ -1,31 +1,12 @@
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Tooltip,
-  Button,
-  Typography,
-  Box,
-  TextField,
-} from "@mui/material";
-import {
-  Menu as MenuIcon,
-  Notifications,
-  Help,
-  Search as SearchIcon,
-} from "@mui/icons-material";
-import Grid2 from "@mui/material/Grid2";
+import { AppBar, Toolbar, TextField, Box } from "@mui/material";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { getSession } from "../api/auth";
-
-const headerBgColor = "#11212D";
-const lightColor = "rgba(255, 255, 255, 0.7)";
-const buttonHoverColor = "#FF6F61";
 
 export function Header(props) {
   const { onDrawerToggle } = props;
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -43,79 +24,43 @@ export function Header(props) {
   };
 
   return (
-    <AppBar position="sticky" elevation={0} sx={{ bgcolor: headerBgColor }}>
-      <Toolbar sx={{ minHeight: 64, justifyContent: "space-between" }}>
-        <Grid2 container alignItems="center" justifyContent="center">
-          <Grid2 sx={{ display: { xs: "block", sm: "none" } }}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={onDrawerToggle}
-              edge="start"
-            >
-              <MenuIcon />
-            </IconButton>
-          </Grid2>
-
-          <Grid2 sx={{ flexGrow: 1, textAlign: "center" }}>
-            <Typography variant="h5" component="h1" color="inherit">
-              ViewsEvent
-            </Typography>
-          </Grid2>
-
-          <Grid2
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Grid2>
-              <Tooltip title="Help">
-                <IconButton color="inherit">
-                  <Help sx={{ color: lightColor }} />
-                </IconButton>
-              </Tooltip>
-            </Grid2>
-            <Grid2>
-              <Tooltip title="Notifications">
-                <IconButton color="inherit">
-                  <Notifications sx={{ color: lightColor }} />
-                </IconButton>
-              </Tooltip>
-            </Grid2>
-          </Grid2>
-
-          {/* Campo de búsqueda */}
-          <Grid2 sx={{ mx: 2 }}>
-            <Box sx={{ position: "relative" }}>
-              <TextField
-                variant="outlined"
-                size="small"
-                placeholder="Buscar..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                sx={{
-                  bgcolor: "white",
-                  borderRadius: 2,
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#ccc",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: buttonHoverColor,
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: buttonHoverColor,
-                    },
-                  },
-                }}
-                InputProps={{
-                  startAdornment: <SearchIcon sx={{ color: "#999", mr: 1 }} />,
-                }}
-              />
-            </Box>
-          </Grid2>
-        </Grid2>
+    <AppBar position="sticky" elevation={0} sx={{ bgcolor: "#11212D" }}>
+      {" "}
+      {/* Cambia el color de fondo aquí */}
+      <Toolbar sx={{ minHeight: 80, justifyContent: "center" }}>
+        {" "}
+        {/* Aumenta la altura del header */}
+        {/* Campo de búsqueda */}
+        <Box sx={{ position: "relative", width: "100%", maxWidth: 400 }}>
+          {" "}
+          {/* Define un ancho máximo para centrar mejor */}
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder="Buscar..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            sx={{
+              bgcolor: "white",
+              borderRadius: 2,
+              width: "100%", // Asegura que la barra de búsqueda ocupe todo el ancho disponible
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#ccc",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#FF6F61", // Cambia este color según lo desees
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#FF6F61", // Cambia este color según lo desees
+                },
+              },
+            }}
+            InputProps={{
+              startAdornment: <SearchIcon sx={{ color: "#999", mr: 1 }} />,
+            }}
+          />
+        </Box>
       </Toolbar>
     </AppBar>
   );
